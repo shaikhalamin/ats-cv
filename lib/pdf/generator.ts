@@ -266,9 +266,9 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
 
         // Tech Stack
         if (exp.techStack) {
-          doc.font(regularFont)
+          doc.font(boldFont)
             .fontSize(TECH_STACK_SIZE)
-            .fillColor(LIGHT_GRAY)
+            .fillColor(BLACK)
             .text(`Tech: ${exp.techStack}`, PAGE_MARGIN + 8, yPosition, { width: CONTENT_WIDTH - 8 });
           yPosition = doc.y + 4;
         }
