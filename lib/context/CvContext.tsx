@@ -45,7 +45,7 @@ const DEFAULT_CV_JSON = `{
   },
   "socialLinks": {
     "github": "github.com/shaikhalamin",
-    "linkedin": "linkedin.com/in/shaikhalamin",
+    "linkedin": "linkedin.com/in/shaikh-al-amin",
     "portfolio": "shaikhalamin.dev"
   },
   "professionalSummary": "Forward-thinking and solution-oriented professional with 9+ years in software engineering from startups to enterprise. I specialize in backend systems that scale. Currently building a real-time video consultation platform at tixio.io, where I design microservices handling WebRTC sessions, real-time messaging, and AWS infrastructure.",
