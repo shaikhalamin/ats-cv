@@ -9,13 +9,19 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
     "next": "16.1.6",
+    "pdf-lib": "^1.17.1",
+    "pdfkit": "^0.17.2",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "react-pdf": "^10.4.1",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdfkit": "^0.17.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

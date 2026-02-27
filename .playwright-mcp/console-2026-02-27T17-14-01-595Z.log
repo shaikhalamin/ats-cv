@@ -1,0 +1,10 @@
+[    2711ms] [ERROR] PDF generation error: TypeError: Failed to fetch
+    at CvProvider.useCallback[generatePdf] (http://localhost:3000/_next/static/chunks/lib_aaebe36d._.js:350:40)
+    at executeDispatch (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:10314:13)
+    at runWithFiberInDEV (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:965:74)
+    at processDispatchQueue (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:10340:41)
+    at http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:10615:13
+    at batchedUpdates$1 (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:2253:44)
+    at dispatchEventForPluginEventSystem (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:10416:9)
+    at dispatchEvent (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:12935:37)
+    at dispatchDiscreteEvent (http://localhost:3000/_next/static/chunks/node_modules_next_dist_compiled_react-dom_1e674e59._.js:12917:64) @ http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:3127

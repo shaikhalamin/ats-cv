@@ -1,0 +1,151 @@
+{
+  "personalDetails": {
+    "name": "Shaikh Al Amin",
+    "title": "Senior Fullstack Developer",
+    "phone": "+8801712341937",
+    "email": "alamin.cse15@gmail.com",
+    "location": "Dhaka, Bangladesh"
+  },
+  "socialLinks": {
+    "github": "github.com/shaikhalamin",
+    "linkedin": "linkedin.com/in/shaikhalamin",
+    "portfolio": "shaikhalamin.dev"
+  },
+  "professionalSummary": "Forward-thinking and solution-oriented professional with 9+ years in software engineering from startups to enterprise. I specialize in backend systems that scale. Currently building a real-time video consultation platform at tixio.io, where I design microservices handling WebRTC sessions, real-time messaging, and AWS infrastructure.",
+  "experience": [
+    {
+      "company": "Tixio IO",
+      "role": "Senior Fullstack Engineer",
+      "period": "February 2025 - Present",
+      "location": "Dhaka, Bangladesh (Remote)",
+      "achievements": [
+        "Building a real-time video consultation platform serving users globally across 15+ countries.",
+        "Architected WebRTC-based video infrastructure handling 10,000+ daily sessions with 99.9% uptime",
+        "Designed microservices backend using NestJS and TypeScript, reducing system latency by 40%",
+        "Led technical decisions for AWS infrastructure (EC2, Lambda, RDS), optimizing cloud costs by 25%",
+        "Mentored 3 junior developers on best practices, code quality, and system design principles"
+      ],
+      "techStack": "Node.js, NestJS, TypeScript, WebRTC, PostgreSQL, MongoDB, Redis, AWS, Docker, Prisma"
+    },
+    {
+      "company": "Liberate Labs",
+      "role": "Lead Fullstack Developer",
+      "period": "April 2024 - January 2025",
+      "location": "Dhaka, Bangladesh (Remote)",
+      "achievements": [
+        "Delivered full-stack solutions for clients across fintech, healthcare, and e-commerce sectors.",
+        "Led development of payment processing system handling $2M+ monthly transactions",
+        "Reduced deployment time by 60% by implementing CI/CD pipelines with GitHub Actions",
+        "Collaborated with product teams to translate business requirements into technical specifications",
+        "Conducted code reviews and established coding standards for team of 5 developers"
+      ],
+      "techStack": "Node.js, Express.js, Nest.js, React.js, PostgreSQL, MongoDB, AWS"
+    },
+    {
+      "company": "Tikweb BD",
+      "role": "Senior Software Engineer",
+      "period": "March 2023 - April 2024",
+      "location": "Dhaka, Bangladesh (Denmark Based)",
+      "achievements": [
+        "Built and maintained web applications for Scandinavian clients in logistics, education, and SaaS.",
+        "Developed real-time dashboard system processing 50,000+ daily events using Socket.io and Redis",
+        "Led migration from REST to GraphQL, improving mobile app performance by 30%",
+        "Mentored 4 junior developers through code reviews and pair programming sessions",
+        "Implemented automated testing strategy, increasing code coverage from 20% to 85%"
+      ],
+      "techStack": "Node.js, Express.js, Nest.js, TypeORM, React.js, MySQL, GCP"
+    },
+    {
+      "company": "Venturas Ltd",
+      "role": "Senior Fullstack Engineer",
+      "period": "February 2021 - March 2023",
+      "location": "Dhaka, Bangladesh (Japan Based)",
+      "achievements": [
+        "Built enterprise Property Management System managing land and building assets with GIS mapping and cloud infrastructure.",
+        "Architected scalable microservices backend using NestJS and TypeScript, supporting 10,000+ property records with 99.9% uptime",
+        "Designed AWS infrastructure (ECS, S3, RDS, VPC) with automated CI/CD pipelines, reducing deployment time by 70%",
+        "Implemented Google Maps geo-clustering feature, enabling clients to visualize and manage 5,000+ property locations efficiently",
+        "Led team of 3 junior developers through code reviews, sprint planning, and technical mentorship",
+        "Built admin dashboards with React and Next.js for real-time data visualization and workflow management"
+      ],
+      "techStack": "Node.js, Express, TypeScript, Nest.js, React, MySQL, AWS"
+    },
+    {
+      "company": "Wipro Limited",
+      "role": "Senior Software Engineer",
+      "period": "September 2019 - January 2021",
+      "location": "Dhaka, Bangladesh (India-based)",
+      "achievements": [
+        "Developed enterprise ERP system serving internal business operations across HR, Finance, and Shared Services departments.",
+        "Built REST APIs for 4 core ERP modules (Shared Services, iExpense, HR Letter, TMS), supporting 1,000+ daily active users",
+        "Optimized database queries and API performance, reducing average response time from 800ms to 200ms",
+        "Designed admin dashboards with CakePHP and jQuery, streamlining data management workflows for non-technical users",
+        "Managed deployment pipelines on Apache/Linux infrastructure, achieving 99.5% uptime across ERP environments",
+        "Mentored 2 junior developers on backend best practices, code quality, and database optimization techniques"
+      ],
+      "techStack": "CakePHP, REST APIs, PHP, CakePHP, JWT, AWS, jQuery, Apache, Linux, JavaScript"
+    },
+    {
+      "company": "Teamnet",
+      "role": "Software Engineer",
+      "period": "April 2016 - August 2019",
+      "location": "Dhaka, Bangladesh (USA-based)",
+      "achievements": [
+        "Built Volatour, a travel booking platform handling flights, hotels, and tour packages with third-party API integrations.",
+        "Developed REST and SOAP APIs for booking workflows and payment processing, supporting 500+ monthly transactions",
+        "Integrated 5+ third-party travel APIs (GDS, payment gateways) for real-time availability and pricing data",
+        "Optimized MySQL database queries and schema design, reducing page load times by 60%",
+        "Built admin panel for operations team to manage bookings, customers, and vendor relationships",
+        "Collaborated with frontend and QA teams to deliver features on 2-week sprint cycles"
+      ],
+      "techStack": "Laravel, MySQL, SOAP API, REST API, React JS, Digital Ocean"
+    }
+  ],
+  "technicalSkills": [
+    {
+      "category": "Programming/Web",
+      "skills": [
+        "OOP",
+        "Node.js",
+        "Express",
+        "TypeScript",
+        "NestJS",
+        "React",
+        "Next.js",
+        "REST",
+        "JWT",
+        "HTML",
+        "CSS",
+        "Bootstrap"
+      ]
+    },
+    {
+      "category": "Database/DBMS",
+      "skills": ["MySQL", "PostgreSQL", "Redis", "TypeORM", "Prisma"]
+    },
+    {
+      "category": "Message/Queue",
+      "skills": ["Redis-Queue (Bull/MQ)", "PG-Queue", "RabbitMQ"]
+    },
+    {
+      "category": "SDLC Methodology",
+      "skills": ["Agile-Scrum (Jira, Confluence)"]
+    },
+    {
+      "category": "Version Control",
+      "skills": ["Git", "BitBucket"]
+    },
+    {
+      "category": "Cloud Platform/VM",
+      "skills": ["AWS", "GCP", "VPC", "EC2", "EB", "RDS", "S3", "Docker"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "BSc in Computer Science and Engineering",
+      "institution": "GSTU, Gopalganj",
+      "year": "2015",
+      "details": "November 2011 - December 2015"
+    }
+  ]
+}

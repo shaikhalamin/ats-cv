@@ -1,0 +1,3 @@
+[   16726ms] [ERROR] Failed to load resource: the server responded with a status of 500 (Internal Server Error) @ http://localhost:3000/api/generate-pdf:0
+[   16727ms] [ERROR] PDF generation error: Error: ENOENT: no such file or directory, open '/ROOT/my_projects/atscv/node_modules/pdfkit/js/data/Helvetica.afm'
+    at CvProvider.useCallback[generatePdf] (http://localhost:3000/_next/static/chunks/my_projects_atscv_lib_d6a6e217._.js:340:27) @ http://localhost:3000/_next/static/chunks/e28b4_next_dist_cd8719f2._.js:3127
