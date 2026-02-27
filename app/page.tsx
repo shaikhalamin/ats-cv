@@ -31,7 +31,7 @@ export default function Home() {
             />
           </svg>
           <h1 className="text-xl font-bold text-gray-900 dark:text-white">
-            ATS CV Generator
+            ATS CV Generator By Shaikh Al Amin
           </h1>
         </div>
 
