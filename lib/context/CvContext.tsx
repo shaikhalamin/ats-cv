@@ -267,6 +267,16 @@ export function CvProvider({ children }: { children: ReactNode }) {
     }
   }, [cvData]);
 
+  // Auto-generate PDF preview on first load
+  const [hasInitialized, setHasInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!hasInitialized && cvData && isValid) {
+      setHasInitialized(true);
+      generatePdf();
+    }
+  }, [hasInitialized, cvData, isValid, generatePdf]);
+
   // Download PDF
   const downloadPdf = useCallback(() => {
     if (!pdfData) return;
