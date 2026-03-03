@@ -59,9 +59,42 @@ function findFontsDirectory(): string | null {
 }
 
 /**
+ * Fetch photo from URL or convert base64 to buffer
+ */
+async function getPhotoBuffer(photoData: string): Promise<Buffer | null> {
+  try {
+    if (photoData.startsWith('http://') || photoData.startsWith('https://')) {
+      // Fetch image from URL
+      const response = await fetch(photoData);
+      if (!response.ok) {
+        console.warn(`Failed to fetch image: ${response.status}`);
+        return null;
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    } else if (photoData.startsWith('data:')) {
+      // Extract base64 from data URL
+      const base64Data = photoData.split(',')[1];
+      return Buffer.from(base64Data, 'base64');
+    } else {
+      // Assume raw base64
+      return Buffer.from(photoData, 'base64');
+    }
+  } catch (error) {
+    console.warn('Failed to load photo:', error);
+    return null;
+  }
+}
+
+/**
  * Generate PDF from CV data and return as Buffer
  */
 export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
+  // Fetch photo buffer before creating PDF (if URL provided)
+  const photoBuffer = data.personalDetails.photo
+    ? await getPhotoBuffer(data.personalDetails.photo)
+    : null;
+
   return new Promise((resolve, reject) => {
     try {
       // Find fonts directory first
@@ -125,18 +158,76 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       };
 
       // ========== HEADER ==========
-      // Name - Large, bold, centered
-      doc.font(boldFont)
-        .fontSize(NAME_FONT_SIZE)
-        .fillColor(BLACK)
-        .text(data.personalDetails.name, { align: 'center' });
+      // Photo dimensions and positioning
+      const PHOTO_SIZE = 70; // Standard photo size (square)
+      const PHOTO_MARGIN = 10;
+      const hasPhoto = data.personalDetails.photo && data.personalDetails.photo.length > 0;
+
+      // Photo position in top right corner
+      const photoX = doc.page.width - PAGE_MARGIN - PHOTO_SIZE;
+      const photoY = PAGE_MARGIN;
+
+      // Draw photo if available
+      if (hasPhoto && photoBuffer) {
+        try {
+          // Draw circular mask using clipping path
+          doc.save();
+          doc.circle(photoX + PHOTO_SIZE / 2, photoY + PHOTO_SIZE / 2, PHOTO_SIZE / 2);
+          doc.clip();
+
+          // Add the image
+          doc.image(photoBuffer, photoX, photoY, {
+            width: PHOTO_SIZE,
+            height: PHOTO_SIZE,
+            fit: [PHOTO_SIZE, PHOTO_SIZE],
+            valign: 'center',
+            align: 'center',
+          });
+          doc.restore();
+
+          // Optional: Add subtle border around photo
+          doc.circle(photoX + PHOTO_SIZE / 2, photoY + PHOTO_SIZE / 2, PHOTO_SIZE / 2)
+            .lineWidth(1)
+            .strokeColor(SECTION_LINE_COLOR)
+            .stroke();
+        } catch (error) {
+          console.warn('Failed to draw photo:', error);
+        }
+      }
+
+      // Calculate available width for text (accounting for photo if present)
+      const textWidth = hasPhoto ? CONTENT_WIDTH - PHOTO_SIZE - PHOTO_MARGIN : CONTENT_WIDTH;
+      const textStartX = PAGE_MARGIN;
+
+      // Name - Large, bold, centered (or left-aligned if photo exists)
+      if (hasPhoto) {
+        doc.font(boldFont)
+          .fontSize(NAME_FONT_SIZE)
+          .fillColor(BLACK)
+          .text(data.personalDetails.name, textStartX, yPosition, {
+            width: textWidth,
+            align: 'left',
+          });
+      } else {
+        doc.font(boldFont)
+          .fontSize(NAME_FONT_SIZE)
+          .fillColor(BLACK)
+          .text(data.personalDetails.name, { align: 'center' });
+      }
       yPosition = doc.y + 4;
 
-      // Title - Lighter, smaller
+      // Title - Lighter, smaller (aligned with name)
       doc.font(regularFont)
         .fontSize(TITLE_FONT_SIZE)
-        .fillColor(MEDIUM_GRAY)
-        .text(data.personalDetails.title, { align: 'center' });
+        .fillColor(MEDIUM_GRAY);
+      if (hasPhoto) {
+        doc.text(data.personalDetails.title, textStartX, yPosition, {
+          width: textWidth,
+          align: 'left',
+        });
+      } else {
+        doc.text(data.personalDetails.title, { align: 'center' });
+      }
       yPosition = doc.y + 10;
 
       // Contact line with clickable links
@@ -155,11 +246,20 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       const totalContactWidth = contactItems.reduce((acc, item, i) => {
         return acc + doc.widthOfString(item.text) + (i > 0 ? doc.widthOfString(separator) : 0);
       }, 0);
-      let contactX = centerX - totalContactWidth / 2;
+
+      // Position contact line based on photo presence
+      let contactX: number;
+      if (hasPhoto) {
+        // Left-align within the text area
+        contactX = textStartX;
+      } else {
+        // Center on page
+        contactX = centerX - totalContactWidth / 2;
+      }
 
       for (let i = 0; i < contactItems.length; i++) {
         const item = contactItems[i];
-        const textWidth = doc.widthOfString(item.text);
+        const itemWidth = doc.widthOfString(item.text);
 
         if (i > 0) {
           doc.fillColor(LIGHT_GRAY).text(separator, contactX, contactY);
@@ -168,11 +268,11 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
 
         if (item.link) {
           doc.fillColor(LINK_COLOR).text(item.text, contactX, contactY, { link: item.link, underline: false });
-          doc.link(contactX, contactY, textWidth, doc.currentLineHeight(), item.link);
+          doc.link(contactX, contactY, itemWidth, doc.currentLineHeight(), item.link);
         } else {
           doc.fillColor(DARK_GRAY).text(item.text, contactX, contactY);
         }
-        contactX += textWidth;
+        contactX += itemWidth;
       }
       yPosition = contactY + 12;
 
@@ -187,11 +287,20 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
         const totalSocialWidth = socialItems.reduce((acc, item, i) => {
           return acc + doc.widthOfString(item.text) + (i > 0 ? doc.widthOfString(separator) : 0);
         }, 0);
-        let socialX = centerX - totalSocialWidth / 2;
+
+        // Position social links based on photo presence
+        let socialX: number;
+        if (hasPhoto) {
+          // Left-align within the text area
+          socialX = textStartX;
+        } else {
+          // Center on page
+          socialX = centerX - totalSocialWidth / 2;
+        }
 
         for (let i = 0; i < socialItems.length; i++) {
           const item = socialItems[i];
-          const textWidth = doc.widthOfString(item.text);
+          const itemWidth = doc.widthOfString(item.text);
 
           if (i > 0) {
             doc.fillColor(LIGHT_GRAY).text(separator, socialX, socialY);
@@ -200,10 +309,18 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
 
           doc.font(regularFont).fontSize(CONTACT_FONT_SIZE).fillColor(LINK_COLOR)
             .text(item.text, socialX, socialY);
-          doc.link(socialX, socialY, textWidth, doc.currentLineHeight(), item.url);
-          socialX += textWidth;
+          doc.link(socialX, socialY, itemWidth, doc.currentLineHeight(), item.url);
+          socialX += itemWidth;
         }
         yPosition = socialY + 16;
+      }
+
+      // Ensure yPosition is below the photo if present
+      if (hasPhoto) {
+        const photoBottom = photoY + PHOTO_SIZE + PHOTO_MARGIN;
+        if (yPosition < photoBottom) {
+          yPosition = photoBottom;
+        }
       }
 
       // Header separator line
@@ -359,11 +476,11 @@ function addSectionTitle(doc: PDFKit.PDFDocument, title: string, y: number, font
 
   const textY = doc.y + 2;
 
-  // Accent underline
+  // Full-width black underline
   doc.moveTo(PAGE_MARGIN, textY)
-    .lineTo(PAGE_MARGIN + 30, textY) // Short accent line
-    .strokeColor(accentColor)
-    .lineWidth(2)
+    .lineTo(doc.page.width - PAGE_MARGIN, textY) // Full content width
+    .strokeColor(BLACK)
+    .lineWidth(1)
     .stroke();
 
   doc.y = textY + 2;

@@ -7,6 +7,7 @@ export const PersonalDetailsSchema = z.object({
   phone: z.string().min(1, 'Phone is required'),
   email: z.string().email('Invalid email address'),
   location: z.string().min(1, 'Location is required'),
+  photo: z.string().optional(), // Base64 encoded image or URL
 });
 
 // Social Links Schema
