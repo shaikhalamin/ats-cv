@@ -38,7 +38,7 @@ const CvContext = createContext<CvContextType | null>(null);
 const DEFAULT_CV_JSON = `{
   "personalDetails": {
     "name": "Shaikh Al Amin",
-    "title": "Lead Fullstack Backend Engineer",
+    "title": "Lead Fullstack Engineer",
     "phone": "+8801712341937",
     "email": "alamin.cse15@gmail.com",
     "location": "Dhaka, Bangladesh",

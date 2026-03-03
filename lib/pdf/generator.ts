@@ -232,10 +232,10 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       }
       yPosition = doc.y + 4;
 
-      // Title - Lighter, smaller (aligned with name)
-      doc.font(regularFont)
-        .fontSize(TITLE_FONT_SIZE)
-        .fillColor(MEDIUM_GRAY);
+      // Title - Bold and prominent (aligned with name)
+      doc.font(boldFont)
+        .fontSize(TITLE_FONT_SIZE + 3)
+        .fillColor(DARK_GRAY);
       if (hasPhoto) {
         doc.text(data.personalDetails.title, textStartX, yPosition, {
           width: textWidth,
