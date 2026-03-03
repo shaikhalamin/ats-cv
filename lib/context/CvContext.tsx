@@ -292,9 +292,11 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const downloadPdf = useCallback(() => {
     if (!pdfData) return;
 
+    const title = cvData?.personalDetails.title.replace(/\s+/g, '') || '';
+    const name = cvData?.personalDetails.name.replace(/\s+/g, '') || 'document';
     const link = document.createElement('a');
     link.href = `data:application/pdf;base64,${pdfData}`;
-    link.download = `cv-${cvData?.personalDetails.name.replace(/\s+/g, '-') || 'document'}.pdf`;
+    link.download = `${title}_${name}_cv.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
