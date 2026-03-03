@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import dynamic from 'next/dynamic';
 import { useCv } from '@/lib/context/CvContext';
 
@@ -17,13 +17,14 @@ const MonacoEditor = dynamic(
   }
 );
 
+// SSR-safe client detection
+const emptySubscribe = () => () => {};
+const getSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 export default function JsonEditor() {
   const { jsonString, setJsonString, isValid } = useCv();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const isClient = useSyncExternalStore(emptySubscribe, getSnapshot, getServerSnapshot);
 
   const handleEditorChange = (value: string | undefined) => {
     if (value !== undefined) {
@@ -31,7 +32,7 @@ export default function JsonEditor() {
     }
   };
 
-  if (!mounted) {
+  if (!isClient) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-900 rounded-lg">
         <div className="text-gray-400">Loading editor...</div>

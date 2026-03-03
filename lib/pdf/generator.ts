@@ -170,23 +170,39 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       // Draw photo if available
       if (hasPhoto && photoBuffer) {
         try {
-          // Draw circular mask using clipping path
+          // First, get image dimensions by loading it temporarily
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const img = (doc as any).openImage(photoBuffer);
+          const imgWidth = img.width;
+          const imgHeight = img.height;
+
+          // Calculate scale to cover the square (use larger scale factor)
+          const scaleX = PHOTO_SIZE / imgWidth;
+          const scaleY = PHOTO_SIZE / imgHeight;
+          const scale = Math.max(scaleX, scaleY); // Use max to cover
+
+          // Calculate scaled dimensions
+          const scaledWidth = imgWidth * scale;
+          const scaledHeight = imgHeight * scale;
+
+          // Center the image within the square
+          const imgX = photoX - (scaledWidth - PHOTO_SIZE) / 2;
+          const imgY = photoY - (scaledHeight - PHOTO_SIZE) / 2;
+
+          // Use clipping path to crop image to square
           doc.save();
-          doc.circle(photoX + PHOTO_SIZE / 2, photoY + PHOTO_SIZE / 2, PHOTO_SIZE / 2);
+          doc.rect(photoX, photoY, PHOTO_SIZE, PHOTO_SIZE);
           doc.clip();
 
-          // Add the image
-          doc.image(photoBuffer, photoX, photoY, {
-            width: PHOTO_SIZE,
-            height: PHOTO_SIZE,
-            fit: [PHOTO_SIZE, PHOTO_SIZE],
-            valign: 'center',
-            align: 'center',
+          // Add the scaled and centered image
+          doc.image(img, imgX, imgY, {
+            width: scaledWidth,
+            height: scaledHeight,
           });
           doc.restore();
 
-          // Optional: Add subtle border around photo
-          doc.circle(photoX + PHOTO_SIZE / 2, photoY + PHOTO_SIZE / 2, PHOTO_SIZE / 2)
+          // Add subtle border around photo (square)
+          doc.rect(photoX, photoY, PHOTO_SIZE, PHOTO_SIZE)
             .lineWidth(1)
             .strokeColor(SECTION_LINE_COLOR)
             .stroke();

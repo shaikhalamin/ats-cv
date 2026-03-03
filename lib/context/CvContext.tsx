@@ -41,14 +41,15 @@ const DEFAULT_CV_JSON = `{
     "title": "Senior Fullstack Developer",
     "phone": "+8801712341937",
     "email": "alamin.cse15@gmail.com",
-    "location": "Dhaka, Bangladesh"
+    "location": "Dhaka, Bangladesh",
+    "photo": "https://raw.githubusercontent.com/shaikhalamin/ats-cv/main/public/1772549663703.png"
   },
   "socialLinks": {
     "github": "github.com/shaikhalamin",
     "linkedin": "linkedin.com/in/shaikh-al-amin",
     "portfolio": "shaikhalamin.dev"
   },
-  "professionalSummary": "Forward-thinking and solution-oriented professional with 9+ years in software engineering from startups to enterprise. I specialize in backend systems that scale. Currently building a real-time video consultation platform at tixio.io, where I design microservices handling WebRTC sessions, real-time messaging, and AWS infrastructure.",
+  "professionalSummary": "Solution architect and backend specialist with 9+ years building scalable distributed systems. I design event-driven microservices architectures using RabbitMQ, NATS, and Redis, transforming monolithic applications into resilient, decoupled systems. Currently architecting an all-in-one business platform at Tixio, decomposing HR, Payroll, CRM, and WebRTC video consultation into independently deployable services with robust message-driven communication patterns.",
   "experience": [
     {
       "company": "Tixio IO",
@@ -56,13 +57,14 @@ const DEFAULT_CV_JSON = `{
       "period": "February 2025 - Present",
       "location": "Dhaka, Bangladesh (Remote)",
       "achievements": [
-        "Building a real-time video consultation platform serving users globally across 15+ countries.",
-        "Architected WebRTC-based video infrastructure handling 10,000+ daily sessions with 99.9% uptime",
-        "Designed microservices backend using NestJS and TypeScript, reducing system latency by 40%",
-        "Led technical decisions for AWS infrastructure (EC2, Lambda, RDS), optimizing cloud costs by 25%",
-        "Mentored 3 junior developers on best practices, code quality, and system design principles"
+        "Building an all-in-one business platform with HR, Payroll, CRM, and WebRTC-based video consultation modules.",
+        "Architected event-driven microservices backend using NestJS, decomposing monolith into 8 independent services",
+        "Implemented WebRTC video calling infrastructure handling 10,000+ daily sessions with 99.9% uptime",
+        "Implemented RabbitMQ for async job processing (notifications, reporting, data sync) with 99.5% message delivery rate",
+        "Designed NATS-based event streaming for real-time session state synchronization across services",
+        "Led technical decisions for AWS infrastructure (EC2, Lambda, RDS), optimizing cloud costs by 25%"
       ],
-      "techStack": "Node.js, NestJS, TypeScript, WebRTC, PostgreSQL, MongoDB, Redis, AWS, Docker, Prisma"
+      "techStack": "Node.js, NestJS, TypeScript, WebRTC, RabbitMQ, NATS, PostgreSQL, MongoDB, Redis, AWS"
     },
     {
       "company": "Liberate Labs",
@@ -71,12 +73,13 @@ const DEFAULT_CV_JSON = `{
       "location": "Dhaka, Bangladesh (Remote)",
       "achievements": [
         "Delivered full-stack solutions for clients across fintech, healthcare, and e-commerce sectors.",
-        "Led development of payment processing system handling $2M+ monthly transactions",
-        "Reduced deployment time by 60% by implementing CI/CD pipelines with GitHub Actions",
-        "Collaborated with product teams to translate business requirements into technical specifications",
-        "Conducted code reviews and established coding standards for team of 5 developers"
+        "Led microservice decomposition of monolithic fintech platform into 5 domain services with event-driven communication",
+        "Architected RabbitMQ-based payment processing pipeline handling $2M+ monthly transactions with retry logic",
+        "Implemented BullMQ for async job queues (email, PDF generation, webhook callbacks), reducing API latency by 45%",
+        "Built event sourcing pattern for audit logging, enabling full transaction history reconstruction",
+        "Established coding standards and conducted code reviews for team of 5 developers"
       ],
-      "techStack": "Node.js, Express.js, Nest.js, React.js, PostgreSQL, MongoDB, AWS"
+      "techStack": "Node.js, NestJS, RabbitMQ, BullMQ, Redis, PostgreSQL, MongoDB, AWS, Docker"
     },
     {
       "company": "Tikweb BD",
@@ -85,12 +88,12 @@ const DEFAULT_CV_JSON = `{
       "location": "Dhaka, Bangladesh (Denmark Based)",
       "achievements": [
         "Built and maintained web applications for Scandinavian clients in logistics, education, and SaaS.",
-        "Developed real-time dashboard system processing 50,000+ daily events using Socket.io and Redis",
-        "Led migration from REST to GraphQL, improving mobile app performance by 30%",
-        "Mentored 4 junior developers through code reviews and pair programming sessions",
-        "Implemented automated testing strategy, increasing code coverage from 20% to 85%"
+        "Developed real-time event streaming system processing 50,000+ daily events using Socket.io with Redis Pub/Sub",
+        "Implemented event-driven microservice communication pattern for logistics tracking system",
+        "Built Redis-based message queue for async notification processing, improving dashboard load time by 40%",
+        "Led migration from REST to GraphQL, improving mobile app performance by 30%"
       ],
-      "techStack": "Node.js, Express.js, Nest.js, TypeORM, React.js, MySQL, GCP"
+      "techStack": "Node.js, NestJS, Socket.io, Redis Pub/Sub, BullMQ, TypeORM, MySQL, GCP"
     },
     {
       "company": "Venturas Ltd",
@@ -140,6 +143,18 @@ const DEFAULT_CV_JSON = `{
   ],
   "technicalSkills": [
     {
+      "category": "Architecture & Messaging",
+      "skills": [
+        "Microservices",
+        "Event-Driven Architecture",
+        "RabbitMQ",
+        "BullMQ",
+        "NATS",
+        "Redis Pub/Sub",
+        "gRPC"
+      ]
+    },
+    {
       "category": "Programming/Web",
       "skills": [
         "OOP",
@@ -159,10 +174,6 @@ const DEFAULT_CV_JSON = `{
     {
       "category": "Database/DBMS",
       "skills": ["MySQL", "PostgreSQL", "Redis", "TypeORM", "Prisma"]
-    },
-    {
-      "category": "Message/Queue",
-      "skills": ["Redis-Queue (Bull/MQ)", "PG-Queue", "RabbitMQ"]
     },
     {
       "category": "SDLC Methodology",
