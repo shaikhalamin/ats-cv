@@ -57,14 +57,12 @@ const DEFAULT_CV_JSON = `{
       "period": "February 2025 - Present",
       "location": "Dhaka, Bangladesh (Remote)",
       "achievements": [
-        "Building an all-in-one business platform with HR, Payroll, CRM, and WebRTC-based video consultation modules.",
-        "Architected event-driven microservices backend using NestJS, decomposing monolith into 8 independent services",
-        "Implemented WebRTC video calling infrastructure handling 10,000+ daily sessions with 99.9% uptime",
-        "Implemented RabbitMQ for async job processing (notifications, reporting, data sync) with 99.5% message delivery rate",
-        "Designed NATS-based event streaming for real-time session state synchronization across services",
-        "Led technical decisions for AWS infrastructure (EC2, Lambda, RDS), optimizing cloud costs by 25%"
+        "Lead backend development for Vadio (real-time video consultation) and the HR & CRM platform — designing RESTful APIs, WebSocket integrations, and session management with NestJS, MongoDB, and Prisma ORM.",
+        "Design event-driven microservice communication using NATS messaging and BullMQ job queues for async processing (notifications, reporting, data sync) across independently deployable services.",
+        "Build React-based admin portals for Vadio dashboard and HR/CRM management interfaces with role-based access control.",
+        "Mentor junior developers through code reviews, architectural guidance, and sprint planning."
       ],
-      "techStack": "Node.js, NestJS, TypeScript, WebRTC, RabbitMQ, NATS, PostgreSQL, MongoDB, Redis, AWS"
+      "techStack": "Node.js, NestJS, TypeScript, React, PostgreSQL, MongoDB, Prisma, NATS, BullMQ, Stripe, AWS, GCP"
     },
     {
       "company": "Liberate Labs",
@@ -72,14 +70,11 @@ const DEFAULT_CV_JSON = `{
       "period": "April 2024 - January 2025",
       "location": "Dhaka, Bangladesh (Remote)",
       "achievements": [
-        "Delivered full-stack solutions for clients across fintech, healthcare, and e-commerce sectors.",
-        "Led microservice decomposition of monolithic fintech platform into 5 domain services with event-driven communication",
-        "Architected RabbitMQ-based payment processing pipeline handling $2M+ monthly transactions with retry logic",
-        "Implemented BullMQ for async job queues (email, PDF generation, webhook callbacks), reducing API latency by 45%",
-        "Built event sourcing pattern for audit logging, enabling full transaction history reconstruction",
-        "Established coding standards and conducted code reviews for team of 5 developers"
+        "Led three cross-functional teams delivering SaaS products across e-commerce, legal tech (NDA platform), and education (LMS) — owning technical architecture and client communication.",
+        "Architected domain-driven APIs using NestJS and TypeScript with PostgreSQL and MongoDB, implementing JWT authentication, RBAC, and multi-tenant data isolation.",
+        "Managed AWS infrastructure (EC2, RDS, S3) with CI/CD pipelines, and mentored developers through code reviews and pair programming."
       ],
-      "techStack": "Node.js, NestJS, RabbitMQ, BullMQ, Redis, PostgreSQL, MongoDB, AWS, Docker"
+      "techStack": "Node.js, NestJS, Express.js, TypeScript, React, PostgreSQL, MongoDB, AWS, JWT, CI/CD"
     },
     {
       "company": "Tikweb BD",
@@ -87,13 +82,11 @@ const DEFAULT_CV_JSON = `{
       "period": "March 2023 - April 2024",
       "location": "Dhaka, Bangladesh (Denmark Based)",
       "achievements": [
-        "Built and maintained web applications for Scandinavian clients in logistics, education, and SaaS.",
-        "Developed real-time event streaming system processing 50,000+ daily events using Socket.io with Redis Pub/Sub",
-        "Implemented event-driven microservice communication pattern for logistics tracking system",
-        "Built Redis-based message queue for async notification processing, improving dashboard load time by 40%",
-        "Led migration from REST to GraphQL, improving mobile app performance by 30%"
+        "Owned backend development for consumer-facing Photo and Planner applications — building REST APIs with NestJS, TypeORM, and MySQL for image processing, subscriptions, and user management.",
+        "Designed multi-queue architectures (Firebase Cloud Messaging, Redis-Queue) for background job processing including push notifications and data synchronization.",
+        "Built React admin dashboard and managed Jira-based sprint workflows; deployed on GCP with containerized environments."
       ],
-      "techStack": "Node.js, NestJS, Socket.io, Redis Pub/Sub, BullMQ, TypeORM, MySQL, GCP"
+      "techStack": "Node.js, NestJS, TypeScript, TypeORM, React, MySQL, Redis-Queue, Firebase, GCP"
     },
     {
       "company": "Venturas Ltd",
@@ -101,44 +94,33 @@ const DEFAULT_CV_JSON = `{
       "period": "February 2021 - March 2023",
       "location": "Dhaka, Bangladesh (Japan Based)",
       "achievements": [
-        "Built enterprise Property Management System managing land and building assets with GIS mapping and cloud infrastructure.",
-        "Architected scalable microservices backend using NestJS and TypeScript, supporting 10,000+ property records with 99.9% uptime",
-        "Designed AWS infrastructure (ECS, S3, RDS, VPC) with automated CI/CD pipelines, reducing deployment time by 70%",
-        "Implemented Google Maps geo-clustering feature, enabling clients to visualize and manage 5,000+ property locations efficiently",
-        "Led team of 3 junior developers through code reviews, sprint planning, and technical mentorship",
-        "Built admin dashboards with React and Next.js for real-time data visualization and workflow management"
+        "Architected RESTful microservice APIs using NestJS and TypeScript for a Property Management Application — handling property listings, tenant management, lease tracking, and payment workflows.",
+        "Developed React admin portal for property managers and managed AWS infrastructure (EC2, RDS, S3) with CI/CD pipelines.",
+        "Led code reviews, Jira-based project management, and mentored junior developers through technical interviews and onboarding."
       ],
-      "techStack": "Node.js, Express, TypeScript, Nest.js, React, MySQL, AWS"
+      "techStack": "Node.js, NestJS, TypeScript, React, MySQL, AWS (EC2, RDS, S3), Microservices"
     },
     {
       "company": "Wipro Limited",
       "role": "Senior Software Engineer",
       "period": "September 2019 - January 2021",
-      "location": "Dhaka, Bangladesh (India-based)",
+      "location": "Dhaka, Bangladesh (India Based)",
       "achievements": [
-        "Developed enterprise ERP system serving internal business operations across HR, Finance, and Shared Services departments.",
-        "Built REST APIs for 4 core ERP modules (Shared Services, iExpense, HR Letter, TMS), supporting 1,000+ daily active users",
-        "Optimized database queries and API performance, reducing average response time from 800ms to 200ms",
-        "Designed admin dashboards with CakePHP and jQuery, streamlining data management workflows for non-technical users",
-        "Managed deployment pipelines on Apache/Linux infrastructure, achieving 99.5% uptime across ERP environments",
-        "Mentored 2 junior developers on backend best practices, code quality, and database optimization techniques"
+        "Built and maintained ERP modules (IExpense, Shared Service, TMS) with CakePHP and MySQL — developing RESTful APIs with JWT authentication and role-based access control for web and mobile clients.",
+        "Optimized SQL queries for high-volume transactional data and deployed applications on AWS infrastructure across multi-geography Agile teams."
       ],
-      "techStack": "CakePHP, REST APIs, PHP, CakePHP, JWT, AWS, jQuery, Apache, Linux, JavaScript"
+      "techStack": "PHP, CakePHP, MySQL, REST API, JWT, jQuery, AWS"
     },
     {
       "company": "Teamnet",
       "role": "Software Engineer",
       "period": "April 2016 - August 2019",
-      "location": "Dhaka, Bangladesh (USA-based)",
+      "location": "Dhaka, Bangladesh (USA Based)",
       "achievements": [
-        "Built Volatour, a travel booking platform handling flights, hotels, and tour packages with third-party API integrations.",
-        "Developed REST and SOAP APIs for booking workflows and payment processing, supporting 500+ monthly transactions",
-        "Integrated 5+ third-party travel APIs (GDS, payment gateways) for real-time availability and pricing data",
-        "Optimized MySQL database queries and schema design, reducing page load times by 60%",
-        "Built admin panel for operations team to manage bookings, customers, and vendor relationships",
-        "Collaborated with frontend and QA teams to deliver features on 2-week sprint cycles"
+        "Built Volatour travel booking platform using Laravel and MySQL — integrating SOAP and REST APIs from third-party providers for flights, hotels, and payment processing pipelines.",
+        "Developed RESTful APIs and React admin portal for booking management; deployed on DigitalOcean with server configuration and database administration."
       ],
-      "techStack": "Laravel, MySQL, SOAP API, REST API, React JS, Digital Ocean"
+      "techStack": "Laravel, PHP, MySQL, SOAP API, REST API, React JS, jQuery, DigitalOcean"
     }
   ],
   "technicalSkills": [
