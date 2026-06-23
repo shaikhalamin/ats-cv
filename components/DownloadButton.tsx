@@ -4,12 +4,12 @@ import Button from './ui/Button';
 import { useCv } from '@/lib/context/CvContext';
 
 export default function DownloadButton() {
-  const { pdfData, cvData, downloadPdf, isGenerating } = useCv();
+  const { pdfUrl, downloadPdf, isGenerating } = useCv();
 
   return (
     <Button
       onClick={downloadPdf}
-      disabled={!pdfData || isGenerating}
+      disabled={!pdfUrl || isGenerating}
       variant="secondary"
       className="flex items-center gap-2"
     >

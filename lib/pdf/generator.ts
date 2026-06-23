@@ -1,6 +1,6 @@
 import PDFDocument from 'pdfkit';
-import { existsSync } from 'fs';
-import { join, dirname } from 'path';
+import { existsSync, readFileSync } from 'fs';
+import { join, dirname, normalize, sep } from 'path';
 import { fileURLToPath } from 'url';
 import type { CVData } from '../schemas/cv.schema';
 
@@ -25,16 +25,17 @@ const TECH_STACK_SIZE = 8;
 // Spacing
 const SECTION_GAP = 12;
 const PARAGRAPH_GAP = 6;
-const LINE_GAP = 3;
 
 // Colors - professional palette
 const BLACK = '#1a1a1a';
 const DARK_GRAY = '#2d2d2d';
 const MEDIUM_GRAY = '#555555';
 const LIGHT_GRAY = '#888888';
-const ACCENT_COLOR = '#2563eb'; // Professional blue
 const LINK_COLOR = '#2563eb';
 const SECTION_LINE_COLOR = '#e5e7eb';
+const PHOTO_FETCH_TIMEOUT_MS = 1500;
+
+const photoBufferCache = new Map<string, Buffer | null>();
 
 /**
  * Find font directory by checking multiple paths
@@ -62,20 +63,27 @@ function findFontsDirectory(): string | null {
  * Fetch photo from URL or convert base64 to buffer
  */
 async function getPhotoBuffer(photoData: string): Promise<Buffer | null> {
+  if (photoBufferCache.has(photoData)) {
+    return photoBufferCache.get(photoData) ?? null;
+  }
+
+  const photoBuffer = await loadPhotoBuffer(photoData);
+  photoBufferCache.set(photoData, photoBuffer);
+
+  return photoBuffer;
+}
+
+async function loadPhotoBuffer(photoData: string): Promise<Buffer | null> {
   try {
     if (photoData.startsWith('http://') || photoData.startsWith('https://')) {
-      // Fetch image from URL
-      const response = await fetch(photoData);
-      if (!response.ok) {
-        console.warn(`Failed to fetch image: ${response.status}`);
-        return null;
-      }
-      const arrayBuffer = await response.arrayBuffer();
-      return Buffer.from(arrayBuffer);
+      return await loadRemotePhotoBuffer(photoData);
     } else if (photoData.startsWith('data:')) {
       // Extract base64 from data URL
       const base64Data = photoData.split(',')[1];
       return Buffer.from(base64Data, 'base64');
+    } else if (photoData.startsWith('/')) {
+      const publicPhotoPath = resolvePublicPhotoPath(photoData);
+      return publicPhotoPath ? readFileSync(publicPhotoPath) : null;
     } else {
       // Assume raw base64
       return Buffer.from(photoData, 'base64');
@@ -84,6 +92,61 @@ async function getPhotoBuffer(photoData: string): Promise<Buffer | null> {
     console.warn('Failed to load photo:', error);
     return null;
   }
+}
+
+async function loadRemotePhotoBuffer(photoData: string): Promise<Buffer | null> {
+  const controller = new AbortController();
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  const timeoutPromise = new Promise<null>((resolve) => {
+    timeoutId = setTimeout(() => {
+      controller.abort();
+      resolve(null);
+    }, PHOTO_FETCH_TIMEOUT_MS);
+  });
+
+  const fetchPromise = fetch(photoData, { signal: controller.signal })
+    .then(async (response) => {
+      if (!response.ok) {
+        console.warn(`Failed to fetch image: ${response.status}`);
+        return null;
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    })
+    .catch((error) => {
+      if (error instanceof Error && error.name === 'AbortError') {
+        return null;
+      }
+
+      throw error;
+    });
+
+  try {
+    const result = await Promise.race([fetchPromise, timeoutPromise]);
+
+    if (!result) {
+      console.warn(`Timed out loading photo after ${PHOTO_FETCH_TIMEOUT_MS}ms`);
+    }
+
+    return result;
+  } finally {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
+
+function resolvePublicPhotoPath(photoData: string): string | null {
+  const publicRoot = normalize(join(process.cwd(), 'public'));
+  const normalizedPhotoPath = normalize(join(publicRoot, photoData.replace(/^\/+/, '')));
+
+  if (normalizedPhotoPath !== publicRoot && !normalizedPhotoPath.startsWith(`${publicRoot}${sep}`)) {
+    return null;
+  }
+
+  return existsSync(normalizedPhotoPath) ? normalizedPhotoPath : null;
 }
 
 /**
@@ -107,12 +170,10 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
 
       const boldFontPath = join(fontsDir, 'Roboto-Bold.ttf');
       const regularFontPath = join(fontsDir, 'Roboto-Regular.ttf');
-      const lightFontPath = join(fontsDir, 'Roboto-Light.ttf');
 
       // Font names after registration
       const boldFont = 'Roboto-Bold';
       const regularFont = 'Roboto';
-      const lightFont = 'Roboto-Light';
 
       const doc = new PDFDocument({
         size: 'A4',
@@ -131,7 +192,6 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       // Register fonts immediately after document creation
       doc.registerFont('Roboto', regularFontPath);
       doc.registerFont('Roboto-Bold', boldFontPath);
-      doc.registerFont('Roboto-Light', lightFontPath);
 
       // Set default font
       doc.font('Roboto');
@@ -348,7 +408,7 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       yPosition += SECTION_GAP + 4;
 
       // ========== PROFESSIONAL SUMMARY ==========
-      addSectionTitle(doc, 'PROFESSIONAL SUMMARY', yPosition, boldFont, ACCENT_COLOR);
+      addSectionTitle(doc, 'PROFESSIONAL SUMMARY', yPosition, boldFont);
       yPosition = doc.y + 6;
 
       doc.font(regularFont)
@@ -358,7 +418,7 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       yPosition = doc.y + SECTION_GAP;
 
       // ========== EXPERIENCE ==========
-      addSectionTitle(doc, 'EXPERIENCE', yPosition, boldFont, ACCENT_COLOR);
+      addSectionTitle(doc, 'EXPERIENCE', yPosition, boldFont);
       yPosition = doc.y + 8;
 
       for (const exp of data.experience) {
@@ -412,7 +472,7 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       // ========== TECHNICAL SKILLS ==========
       checkPageBreak(60);
       yPosition += 4;
-      addSectionTitle(doc, 'TECHNICAL SKILLS', yPosition, boldFont, ACCENT_COLOR);
+      addSectionTitle(doc, 'TECHNICAL SKILLS', yPosition, boldFont);
       yPosition = doc.y + 6;
 
       for (const skillGroup of data.technicalSkills) {
@@ -437,7 +497,7 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       // ========== EDUCATION ==========
       checkPageBreak(50);
       yPosition += 6;
-      addSectionTitle(doc, 'EDUCATION', yPosition, boldFont, ACCENT_COLOR);
+      addSectionTitle(doc, 'EDUCATION', yPosition, boldFont);
       yPosition = doc.y + 8;
 
       for (const edu of data.education) {
@@ -483,7 +543,7 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
   });
 }
 
-function addSectionTitle(doc: PDFKit.PDFDocument, title: string, y: number, font: string, accentColor: string): void {
+function addSectionTitle(doc: PDFKit.PDFDocument, title: string, y: number, font: string): void {
   // Section title with accent color
   doc.font(font)
     .fontSize(SECTION_TITLE_SIZE)

@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, ReactNode } from 'react';
 import { parseAndValidateCV } from '@/lib/schemas/cv.schema';
 import type { CVData } from '@/lib/schemas/cv.schema';
 
@@ -22,7 +22,7 @@ interface CvContextType {
   validationErrors: ValidationError[];
 
   // PDF state
-  pdfData: string | null; // Base64 encoded PDF
+  pdfUrl: string | null;
   isGenerating: boolean;
   pdfError: string | null;
 
@@ -42,7 +42,7 @@ const DEFAULT_CV_JSON = `{
     "phone": "+8801712341937",
     "email": "alamin.cse15@gmail.com",
     "location": "Dhaka, Bangladesh",
-    "photo": "https://raw.githubusercontent.com/shaikhalamin/ats-cv/main/public/1772549663703.png"
+    "photo": "/cv-photo.jpg"
   },
   "socialLinks": {
     "github": "github.com/shaikhalamin",
@@ -132,8 +132,7 @@ const DEFAULT_CV_JSON = `{
         "RabbitMQ",
         "BullMQ",
         "NATS",
-        "Redis Pub/Sub",
-        "gRPC"
+        "Redis Pub/Sub"
       ]
     },
     {
@@ -150,7 +149,7 @@ const DEFAULT_CV_JSON = `{
         "JWT",
         "HTML",
         "CSS",
-        "Bootstrap"
+        "Tailwind"
       ]
     },
     {
@@ -190,9 +189,27 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
   // PDF state
-  const [pdfData, setPdfData] = useState<string | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const pdfUrlRef = useRef<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
+
+  const setPdfObjectUrl = useCallback((nextPdfUrl: string | null) => {
+    if (pdfUrlRef.current) {
+      URL.revokeObjectURL(pdfUrlRef.current);
+    }
+
+    pdfUrlRef.current = nextPdfUrl;
+    setPdfUrl(nextPdfUrl);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (pdfUrlRef.current) {
+        URL.revokeObjectURL(pdfUrlRef.current);
+      }
+    };
+  }, []);
 
   // Validate JSON on change
   const validateAndUpdateData = useCallback((json: string) => {
@@ -214,9 +231,9 @@ export function CvProvider({ children }: { children: ReactNode }) {
     setJsonStringState(value);
     validateAndUpdateData(value);
     // Clear PDF when JSON changes
-    setPdfData(null);
+    setPdfObjectUrl(null);
     setPdfError(null);
-  }, [validateAndUpdateData]);
+  }, [setPdfObjectUrl, validateAndUpdateData]);
 
   // Initial validation on mount
   useEffect(() => {
@@ -244,21 +261,15 @@ export function CvProvider({ children }: { children: ReactNode }) {
         throw new Error(errorData.message || 'Failed to generate PDF');
       }
 
-      const arrayBuffer = await response.arrayBuffer();
-      const base64 = btoa(
-        new Uint8Array(arrayBuffer).reduce(
-          (data, byte) => data + String.fromCharCode(byte),
-          ''
-        )
-      );
-      setPdfData(base64);
+      const pdfBlob = await response.blob();
+      setPdfObjectUrl(URL.createObjectURL(pdfBlob));
     } catch (error) {
       console.error('PDF generation error:', error);
       setPdfError(error instanceof Error ? error.message : 'Failed to generate PDF');
     } finally {
       setIsGenerating(false);
     }
-  }, [cvData]);
+  }, [cvData, setPdfObjectUrl]);
 
   // Auto-generate PDF preview on first load
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -272,25 +283,25 @@ export function CvProvider({ children }: { children: ReactNode }) {
 
   // Download PDF
   const downloadPdf = useCallback(() => {
-    if (!pdfData) return;
+    if (!pdfUrl) return;
 
     const title = cvData?.personalDetails.title.replace(/\s+/g, '') || '';
     const name = cvData?.personalDetails.name.replace(/\s+/g, '') || 'document';
     const link = document.createElement('a');
-    link.href = `data:application/pdf;base64,${pdfData}`;
+    link.href = pdfUrl;
     link.download = `${title}_${name}_cv.pdf`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }, [pdfData, cvData]);
+  }, [pdfUrl, cvData]);
 
   // Reset to default
   const resetToDefault = useCallback(() => {
     setJsonStringState(DEFAULT_CV_JSON);
     validateAndUpdateData(DEFAULT_CV_JSON);
-    setPdfData(null);
+    setPdfObjectUrl(null);
     setPdfError(null);
-  }, [validateAndUpdateData]);
+  }, [setPdfObjectUrl, validateAndUpdateData]);
 
   return (
     <CvContext.Provider
@@ -300,7 +311,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
         cvData,
         isValid,
         validationErrors,
-        pdfData,
+        pdfUrl,
         isGenerating,
         pdfError,
         generatePdf,
