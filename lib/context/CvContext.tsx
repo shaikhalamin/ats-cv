@@ -26,6 +26,10 @@ interface CvContextType {
   isGenerating: boolean;
   pdfError: string | null;
 
+  // Render settings
+  placeTechnicalSkillsAfterSummary: boolean;
+  setPlaceTechnicalSkillsAfterSummary: (value: boolean) => void;
+
   // Actions
   generatePdf: () => Promise<void>;
   downloadPdf: () => void;
@@ -194,6 +198,9 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
+  // Render settings
+  const [placeTechnicalSkillsAfterSummary, setPlaceTechnicalSkillsAfterSummaryState] = useState(false);
+
   const setPdfObjectUrl = useCallback((nextPdfUrl: string | null) => {
     if (pdfUrlRef.current) {
       URL.revokeObjectURL(pdfUrlRef.current);
@@ -202,6 +209,12 @@ export function CvProvider({ children }: { children: ReactNode }) {
     pdfUrlRef.current = nextPdfUrl;
     setPdfUrl(nextPdfUrl);
   }, []);
+
+  const setPlaceTechnicalSkillsAfterSummary = useCallback((value: boolean) => {
+    setPlaceTechnicalSkillsAfterSummaryState(value);
+    setPdfObjectUrl(null);
+    setPdfError(null);
+  }, [setPdfObjectUrl]);
 
   useEffect(() => {
     return () => {
@@ -253,7 +266,12 @@ export function CvProvider({ children }: { children: ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(cvData),
+        body: JSON.stringify({
+          cvData,
+          options: {
+            placeTechnicalSkillsAfterSummary,
+          },
+        }),
       });
 
       if (!response.ok) {
@@ -269,7 +287,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsGenerating(false);
     }
-  }, [cvData, setPdfObjectUrl]);
+  }, [cvData, placeTechnicalSkillsAfterSummary, setPdfObjectUrl]);
 
   // Auto-generate PDF preview on first load
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -299,6 +317,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const resetToDefault = useCallback(() => {
     setJsonStringState(DEFAULT_CV_JSON);
     validateAndUpdateData(DEFAULT_CV_JSON);
+    setPlaceTechnicalSkillsAfterSummaryState(false);
     setPdfObjectUrl(null);
     setPdfError(null);
   }, [setPdfObjectUrl, validateAndUpdateData]);
@@ -314,6 +333,8 @@ export function CvProvider({ children }: { children: ReactNode }) {
         pdfUrl,
         isGenerating,
         pdfError,
+        placeTechnicalSkillsAfterSummary,
+        setPlaceTechnicalSkillsAfterSummary,
         generatePdf,
         downloadPdf,
         resetToDefault,
