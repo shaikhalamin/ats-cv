@@ -471,6 +471,17 @@ export async function generatePDFBuffer(
         });
       }
 
+      if (data.projects?.length) {
+        yPosition = renderProjectShowcaseSection({
+          doc,
+          data,
+          yPosition,
+          checkPageBreak,
+          boldFont,
+          regularFont,
+        });
+      }
+
       yPosition = renderEducationSection({
         doc,
         data,
@@ -575,6 +586,63 @@ function renderTechnicalSkillsSection({
       .fillColor(MEDIUM_GRAY)
       .text(skillGroup.skills.join(', '), PAGE_MARGIN + categoryWidth + 4, yPosition, { width: CONTENT_WIDTH - categoryWidth - 4 });
     yPosition = doc.y + 3;
+  }
+
+  return yPosition;
+}
+
+function renderProjectShowcaseSection({
+  doc,
+  data,
+  yPosition,
+  checkPageBreak,
+  boldFont,
+  regularFont,
+}: SectionRenderContext): number {
+  if (!data.projects?.length) {
+    return yPosition;
+  }
+
+  // ========== PROJECT SHOWCASE ==========
+  yPosition = checkPageBreak(70, yPosition);
+  yPosition += 6;
+  addSectionTitle(doc, 'PROJECT SHOWCASE', yPosition, boldFont);
+  yPosition = doc.y + 8;
+
+  for (const project of data.projects) {
+    yPosition = checkPageBreak(72, yPosition);
+
+    doc.font(boldFont)
+      .fontSize(ROLE_FONT_SIZE)
+      .fillColor(BLACK)
+      .text(project.name, PAGE_MARGIN, yPosition, {
+        width: CONTENT_WIDTH,
+        link: project.link,
+        underline: false,
+      });
+    yPosition = doc.y + 2;
+
+    doc.font(regularFont)
+      .fontSize(CONTACT_FONT_SIZE)
+      .fillColor(LINK_COLOR)
+      .text(project.link, PAGE_MARGIN, yPosition, {
+        width: CONTENT_WIDTH,
+        link: project.link,
+        underline: false,
+      });
+    yPosition = doc.y + 4;
+
+    doc.font(regularFont)
+      .fontSize(BODY_FONT_SIZE)
+      .fillColor(DARK_GRAY)
+      .text(project.description, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH, lineGap: 1 });
+    yPosition = doc.y + 3;
+
+    doc.font(boldFont)
+      .fontSize(TECH_STACK_SIZE)
+      .fillColor(BLACK)
+      .text(`Tools: ${project.tools.join(', ')}`, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
+    yPosition = doc.y + PARAGRAPH_GAP;
   }
 
   return yPosition;
