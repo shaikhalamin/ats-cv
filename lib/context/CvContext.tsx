@@ -49,7 +49,7 @@ const DEFAULT_CV_JSON = `{
     "linkedin": "linkedin.com/in/shaikh-al-amin",
     "portfolio": "shaikhalamin.dev"
   },
-  "professionalSummary": "Solution architect and backend specialist with 9+ years building scalable distributed systems. I design event-driven microservices architectures using RabbitMQ, NATS, and Redis, transforming monolithic applications into resilient, decoupled systems. Currently architecting an all-in-one business platform at Tixio, decomposing HR, Payroll, CRM, and WebRTC video consultation into independently deployable services with robust message-driven communication patterns.",
+  "professionalSummary": "Solution architect and backend specialist with 9+ years building scalable distributed systems. I design event-driven microservices architectures using RabbitMQ, NATS, and Redis, transforming monolithic applications into resilient, decoupled systems. Currently architecting an all-in-one business platform at Tixio, decomposing HR, CRM, and WebRTC video consultation into independently deployable services with robust message-driven communication patterns.",
   "experience": [
     {
       "company": "Tixio IO",
