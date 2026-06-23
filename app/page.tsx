@@ -9,7 +9,15 @@ import { useCv } from '@/lib/context/CvContext';
 import { useState } from 'react';
 
 export default function Home() {
-  const { isValid, isGenerating, generatePdf, resetToDefault, validationErrors } = useCv();
+  const {
+    isValid,
+    isGenerating,
+    generatePdf,
+    resetToDefault,
+    validationErrors,
+    placeTechnicalSkillsAfterSummary,
+    setPlaceTechnicalSkillsAfterSummary,
+  } = useCv();
   const [showErrors, setShowErrors] = useState(true);
 
   return (
@@ -36,6 +44,15 @@ export default function Home() {
         </div>
 
         <div className="flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            <input
+              type="checkbox"
+              checked={placeTechnicalSkillsAfterSummary}
+              onChange={(event) => setPlaceTechnicalSkillsAfterSummary(event.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            Technical Skills after Professional Summary
+          </label>
           <Button
             onClick={generatePdf}
             disabled={!isValid || isGenerating}

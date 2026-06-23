@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
+const pageSource = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
 
 test('CvContext exposes render-order setting and sends wrapped PDF payload', () => {
   assert.match(contextSource, /placeTechnicalSkillsAfterSummary:\s*boolean;/);
@@ -27,4 +28,18 @@ test('CvContext exposes render-order setting and sends wrapped PDF payload', () 
     contextSource,
     /value=\{\{[\s\S]*placeTechnicalSkillsAfterSummary,[\s\S]*setPlaceTechnicalSkillsAfterSummary,[\s\S]*generatePdf,/,
   );
+});
+
+test('app page renders a checkbox bound to the render-order setting', () => {
+  assert.match(
+    pageSource,
+    /const \{[\s\S]*placeTechnicalSkillsAfterSummary,[\s\S]*setPlaceTechnicalSkillsAfterSummary,[\s\S]*\} = useCv\(\);/,
+  );
+  assert.match(pageSource, /type="checkbox"/);
+  assert.match(pageSource, /checked=\{placeTechnicalSkillsAfterSummary\}/);
+  assert.match(
+    pageSource,
+    /onChange=\{\(event\) => setPlaceTechnicalSkillsAfterSummary\(event\.target\.checked\)\}/,
+  );
+  assert.match(pageSource, /Technical Skills after Professional Summary/);
 });
