@@ -173,6 +173,14 @@ const DEFAULT_CV_JSON = `{
       "skills": ["AWS", "GCP", "VPC", "EC2", "EB", "RDS", "S3", "Docker"]
     }
   ],
+  "projects": [
+    {
+      "name": "Multi-Tenant SaaS Dashboard",
+      "link": "https://example.com",
+      "description": "Built a multi-tenant SaaS dashboard with role-based access, billing workflows, and analytics.",
+      "tools": ["Next.js", "NestJS", "PostgreSQL", "Docker"]
+    }
+  ],
   "education": [
     {
       "degree": "BSc in Computer Science and Engineering",

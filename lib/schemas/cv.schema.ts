@@ -41,6 +41,14 @@ export const EducationSchema = z.object({
   details: z.string().optional(),
 });
 
+// Project Schema
+export const ProjectSchema = z.object({
+  name: z.string().min(1, 'Project name is required'),
+  link: z.string().url('Project link must be a valid URL'),
+  description: z.string().min(1, 'Project description is required'),
+  tools: z.array(z.string().min(1, 'Tool cannot be empty')).min(1, 'At least one project tool is required'),
+});
+
 // Complete CV Data Schema
 export const CVDataSchema = z.object({
   personalDetails: PersonalDetailsSchema,
@@ -48,6 +56,7 @@ export const CVDataSchema = z.object({
   professionalSummary: z.string().min(1, 'Professional summary is required'),
   experience: z.array(ExperienceSchema).min(1, 'At least one experience is required'),
   technicalSkills: z.array(TechnicalSkillSchema).min(1, 'At least one skill category is required'),
+  projects: z.array(ProjectSchema).optional(),
   education: z.array(EducationSchema).min(1, 'At least one education entry is required'),
 });
 
@@ -57,6 +66,7 @@ export type SocialLinks = z.infer<typeof SocialLinksSchema>;
 export type Experience = z.infer<typeof ExperienceSchema>;
 export type TechnicalSkill = z.infer<typeof TechnicalSkillSchema>;
 export type Education = z.infer<typeof EducationSchema>;
+export type Project = z.infer<typeof ProjectSchema>;
 export type CVData = z.infer<typeof CVDataSchema>;
 
 // Validation helper function
