@@ -4,6 +4,21 @@ import { join, dirname, normalize, sep } from 'path';
 import { fileURLToPath } from 'url';
 import type { CVData } from '../schemas/cv.schema';
 
+export interface PDFGenerationOptions {
+  placeTechnicalSkillsAfterSummary?: boolean;
+}
+
+type CheckPageBreak = (requiredSpace: number, yPosition: number) => number;
+
+interface SectionRenderContext {
+  doc: PDFKit.PDFDocument;
+  data: CVData;
+  yPosition: number;
+  checkPageBreak: CheckPageBreak;
+  boldFont: string;
+  regularFont: string;
+}
+
 // Get the directory of this file for reliable path resolution
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -152,7 +167,10 @@ function resolvePublicPhotoPath(photoData: string): string | null {
 /**
  * Generate PDF from CV data and return as Buffer
  */
-export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
+export async function generatePDFBuffer(
+  data: CVData,
+  options: PDFGenerationOptions = {},
+): Promise<Buffer> {
   // Fetch photo buffer before creating PDF (if URL provided)
   const photoBuffer = data.personalDetails.photo
     ? await getPhotoBuffer(data.personalDetails.photo)
@@ -208,13 +226,13 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       let yPosition = PAGE_MARGIN;
 
       // Helper to check and handle page breaks
-      const checkPageBreak = (requiredSpace: number): boolean => {
+      const checkPageBreak: CheckPageBreak = (requiredSpace, currentYPosition) => {
         if (doc.y + requiredSpace > doc.page.height - PAGE_MARGIN) {
           doc.addPage();
-          yPosition = PAGE_MARGIN;
-          return true;
+          return PAGE_MARGIN;
         }
-        return false;
+
+        return currentYPosition;
       };
 
       // ========== HEADER ==========
@@ -417,123 +435,50 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
         .text(data.professionalSummary, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH, lineGap: 2 });
       yPosition = doc.y + SECTION_GAP;
 
-      // ========== EXPERIENCE ==========
-      addSectionTitle(doc, 'EXPERIENCE', yPosition, boldFont);
-      yPosition = doc.y + 8;
-
-      for (const exp of data.experience) {
-        checkPageBreak(80);
-
-        // Company name
-        doc.font(boldFont)
-          .fontSize(COMPANY_FONT_SIZE)
-          .fillColor(BLACK)
-          .text(exp.company, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH - 140, lineBreak: false });
-
-        // Period - right aligned
-        doc.font(regularFont)
-          .fontSize(CONTACT_FONT_SIZE)
-          .fillColor(MEDIUM_GRAY)
-          .text(exp.period, doc.page.width - PAGE_MARGIN - 140, yPosition, { width: 140, align: 'right', lineBreak: false });
-        doc.text('', { lineBreak: true });
-        yPosition = doc.y + 3;
-
-        // Role with location
-        const roleText = exp.location ? `${exp.role}  \u2022  ${exp.location}` : exp.role;
-        doc.font(regularFont)
-          .fontSize(ROLE_FONT_SIZE)
-          .fillColor(MEDIUM_GRAY)
-          .text(roleText, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
-        yPosition = doc.y + 4;
-
-        // Achievements
-        for (const achievement of exp.achievements) {
-          checkPageBreak(18);
-          const bulletText = `\u2022  ${achievement}`;
-          doc.font(regularFont)
-            .fontSize(BODY_FONT_SIZE)
-            .fillColor(DARK_GRAY)
-            .text(bulletText, PAGE_MARGIN + 8, yPosition, { width: CONTENT_WIDTH - 8, lineGap: 1 });
-          yPosition = doc.y + 2;
-        }
-
-        // Tech Stack
-        if (exp.techStack) {
-          doc.font(boldFont)
-            .fontSize(TECH_STACK_SIZE)
-            .fillColor(BLACK)
-            .text(`Tech: ${exp.techStack}`, PAGE_MARGIN + 8, yPosition, { width: CONTENT_WIDTH - 8 });
-          yPosition = doc.y + 4;
-        }
-
-        yPosition += PARAGRAPH_GAP;
+      if (options.placeTechnicalSkillsAfterSummary) {
+        yPosition = renderTechnicalSkillsSection({
+          doc,
+          data,
+          yPosition,
+          checkPageBreak,
+          boldFont,
+          regularFont,
+        });
+        yPosition = renderExperienceSection({
+          doc,
+          data,
+          yPosition,
+          checkPageBreak,
+          boldFont,
+          regularFont,
+        });
+      } else {
+        yPosition = renderExperienceSection({
+          doc,
+          data,
+          yPosition,
+          checkPageBreak,
+          boldFont,
+          regularFont,
+        });
+        yPosition = renderTechnicalSkillsSection({
+          doc,
+          data,
+          yPosition,
+          checkPageBreak,
+          boldFont,
+          regularFont,
+        });
       }
 
-      // ========== TECHNICAL SKILLS ==========
-      checkPageBreak(60);
-      yPosition += 4;
-      addSectionTitle(doc, 'TECHNICAL SKILLS', yPosition, boldFont);
-      yPosition = doc.y + 6;
-
-      for (const skillGroup of data.technicalSkills) {
-        checkPageBreak(16);
-
-        // Category in bold
-        doc.font(boldFont)
-          .fontSize(BODY_FONT_SIZE)
-          .fillColor(DARK_GRAY)
-          .text(`${skillGroup.category}:`, PAGE_MARGIN, yPosition, { lineBreak: false });
-
-        const categoryWidth = doc.widthOfString(`${skillGroup.category}: `);
-
-        // Skills in regular
-        doc.font(regularFont)
-          .fontSize(BODY_FONT_SIZE)
-          .fillColor(MEDIUM_GRAY)
-          .text(skillGroup.skills.join(', '), PAGE_MARGIN + categoryWidth + 4, yPosition, { width: CONTENT_WIDTH - categoryWidth - 4 });
-        yPosition = doc.y + 3;
-      }
-
-      // ========== EDUCATION ==========
-      checkPageBreak(50);
-      yPosition += 6;
-      addSectionTitle(doc, 'EDUCATION', yPosition, boldFont);
-      yPosition = doc.y + 8;
-
-      for (const edu of data.education) {
-        checkPageBreak(30);
-
-        // Degree
-        doc.font(boldFont)
-          .fontSize(ROLE_FONT_SIZE)
-          .fillColor(BLACK)
-          .text(edu.degree, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH - 80, lineBreak: false });
-
-        // Year
-        doc.font(regularFont)
-          .fontSize(CONTACT_FONT_SIZE)
-          .fillColor(MEDIUM_GRAY)
-          .text(edu.year, doc.page.width - PAGE_MARGIN - 80, yPosition, { width: 80, align: 'right', lineBreak: false });
-        doc.text('', { lineBreak: true });
-        yPosition = doc.y + 2;
-
-        // Institution
-        doc.font(regularFont)
-          .fontSize(BODY_FONT_SIZE)
-          .fillColor(MEDIUM_GRAY)
-          .text(edu.institution, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
-        yPosition = doc.y + 2;
-
-        // Details
-        if (edu.details) {
-          doc.font(regularFont)
-            .fontSize(CONTACT_FONT_SIZE)
-            .fillColor(LIGHT_GRAY)
-            .text(edu.details, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
-          yPosition = doc.y + 4;
-        }
-        yPosition += 4;
-      }
+      yPosition = renderEducationSection({
+        doc,
+        data,
+        yPosition,
+        checkPageBreak,
+        boldFont,
+        regularFont,
+      });
 
       // Finalize PDF
       doc.end();
@@ -541,6 +486,146 @@ export async function generatePDFBuffer(data: CVData): Promise<Buffer> {
       reject(error);
     }
   });
+}
+
+function renderExperienceSection({
+  doc,
+  data,
+  yPosition,
+  checkPageBreak,
+  boldFont,
+  regularFont,
+}: SectionRenderContext): number {
+  // ========== EXPERIENCE ==========
+  addSectionTitle(doc, 'EXPERIENCE', yPosition, boldFont);
+  yPosition = doc.y + 8;
+
+  for (const exp of data.experience) {
+    yPosition = checkPageBreak(80, yPosition);
+
+    doc.font(boldFont)
+      .fontSize(COMPANY_FONT_SIZE)
+      .fillColor(BLACK)
+      .text(exp.company, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH - 140, lineBreak: false });
+
+    doc.font(regularFont)
+      .fontSize(CONTACT_FONT_SIZE)
+      .fillColor(MEDIUM_GRAY)
+      .text(exp.period, doc.page.width - PAGE_MARGIN - 140, yPosition, { width: 140, align: 'right', lineBreak: false });
+    doc.text('', { lineBreak: true });
+    yPosition = doc.y + 3;
+
+    const roleText = exp.location ? `${exp.role}  \u2022  ${exp.location}` : exp.role;
+    doc.font(regularFont)
+      .fontSize(ROLE_FONT_SIZE)
+      .fillColor(MEDIUM_GRAY)
+      .text(roleText, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
+    yPosition = doc.y + 4;
+
+    for (const achievement of exp.achievements) {
+      yPosition = checkPageBreak(18, yPosition);
+      const bulletText = `\u2022  ${achievement}`;
+      doc.font(regularFont)
+        .fontSize(BODY_FONT_SIZE)
+        .fillColor(DARK_GRAY)
+        .text(bulletText, PAGE_MARGIN + 8, yPosition, { width: CONTENT_WIDTH - 8, lineGap: 1 });
+      yPosition = doc.y + 2;
+    }
+
+    if (exp.techStack) {
+      doc.font(boldFont)
+        .fontSize(TECH_STACK_SIZE)
+        .fillColor(BLACK)
+        .text(`Tech: ${exp.techStack}`, PAGE_MARGIN + 8, yPosition, { width: CONTENT_WIDTH - 8 });
+      yPosition = doc.y + 4;
+    }
+
+    yPosition += PARAGRAPH_GAP;
+  }
+
+  return yPosition;
+}
+
+function renderTechnicalSkillsSection({
+  doc,
+  data,
+  yPosition,
+  checkPageBreak,
+  boldFont,
+  regularFont,
+}: SectionRenderContext): number {
+  // ========== TECHNICAL SKILLS ==========
+  yPosition = checkPageBreak(60, yPosition);
+  yPosition += 4;
+  addSectionTitle(doc, 'TECHNICAL SKILLS', yPosition, boldFont);
+  yPosition = doc.y + 6;
+
+  for (const skillGroup of data.technicalSkills) {
+    yPosition = checkPageBreak(16, yPosition);
+
+    doc.font(boldFont)
+      .fontSize(BODY_FONT_SIZE)
+      .fillColor(DARK_GRAY)
+      .text(`${skillGroup.category}:`, PAGE_MARGIN, yPosition, { lineBreak: false });
+
+    const categoryWidth = doc.widthOfString(`${skillGroup.category}: `);
+
+    doc.font(regularFont)
+      .fontSize(BODY_FONT_SIZE)
+      .fillColor(MEDIUM_GRAY)
+      .text(skillGroup.skills.join(', '), PAGE_MARGIN + categoryWidth + 4, yPosition, { width: CONTENT_WIDTH - categoryWidth - 4 });
+    yPosition = doc.y + 3;
+  }
+
+  return yPosition;
+}
+
+function renderEducationSection({
+  doc,
+  data,
+  yPosition,
+  checkPageBreak,
+  boldFont,
+  regularFont,
+}: SectionRenderContext): number {
+  // ========== EDUCATION ==========
+  yPosition = checkPageBreak(50, yPosition);
+  yPosition += 6;
+  addSectionTitle(doc, 'EDUCATION', yPosition, boldFont);
+  yPosition = doc.y + 8;
+
+  for (const edu of data.education) {
+    yPosition = checkPageBreak(30, yPosition);
+
+    doc.font(boldFont)
+      .fontSize(ROLE_FONT_SIZE)
+      .fillColor(BLACK)
+      .text(edu.degree, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH - 80, lineBreak: false });
+
+    doc.font(regularFont)
+      .fontSize(CONTACT_FONT_SIZE)
+      .fillColor(MEDIUM_GRAY)
+      .text(edu.year, doc.page.width - PAGE_MARGIN - 80, yPosition, { width: 80, align: 'right', lineBreak: false });
+    doc.text('', { lineBreak: true });
+    yPosition = doc.y + 2;
+
+    doc.font(regularFont)
+      .fontSize(BODY_FONT_SIZE)
+      .fillColor(MEDIUM_GRAY)
+      .text(edu.institution, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
+    yPosition = doc.y + 2;
+
+    if (edu.details) {
+      doc.font(regularFont)
+        .fontSize(CONTACT_FONT_SIZE)
+        .fillColor(LIGHT_GRAY)
+        .text(edu.details, PAGE_MARGIN, yPosition, { width: CONTENT_WIDTH });
+      yPosition = doc.y + 4;
+    }
+    yPosition += 4;
+  }
+
+  return yPosition;
 }
 
 function addSectionTitle(doc: PDFKit.PDFDocument, title: string, y: number, font: string): void {

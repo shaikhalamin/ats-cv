@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
 const pageSource = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
+const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
 
 test('CvContext exposes render-order setting and sends wrapped PDF payload', () => {
   assert.match(contextSource, /placeTechnicalSkillsAfterSummary:\s*boolean;/);
@@ -42,4 +43,22 @@ test('app page renders a checkbox bound to the render-order setting', () => {
     /onChange=\{\(event\) => setPlaceTechnicalSkillsAfterSummary\(event\.target\.checked\)\}/,
   );
   assert.match(pageSource, /Technical Skills after Professional Summary/);
+});
+
+test('PDF generator exposes the render option and conditionally orders sections', () => {
+  assert.match(
+    generatorSource,
+    /export interface PDFGenerationOptions \{[\s\S]*placeTechnicalSkillsAfterSummary\?: boolean;[\s\S]*\}/,
+  );
+  assert.match(
+    generatorSource,
+    /export async function generatePDFBuffer\(\s*data: CVData,\s*options: PDFGenerationOptions = \{\},\s*\): Promise<Buffer>/,
+  );
+  assert.match(generatorSource, /function renderExperienceSection\(/);
+  assert.match(generatorSource, /function renderTechnicalSkillsSection\(/);
+  assert.match(generatorSource, /function renderEducationSection\(/);
+  assert.match(
+    generatorSource,
+    /if \(options\.placeTechnicalSkillsAfterSummary\) \{[\s\S]*renderTechnicalSkillsSection\([\s\S]*renderExperienceSection\([\s\S]*\} else \{[\s\S]*renderExperienceSection\([\s\S]*renderTechnicalSkillsSection\([\s\S]*\}[\s\S]*renderEducationSection\(/,
+  );
 });
