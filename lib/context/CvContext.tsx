@@ -175,10 +175,16 @@ const DEFAULT_CV_JSON = `{
   ],
   "projects": [
     {
-      "name": "Multi-Tenant SaaS Dashboard",
-      "link": "https://example.com",
-      "description": "Built a multi-tenant SaaS dashboard with role-based access, billing workflows, and analytics.",
-      "tools": ["Next.js", "NestJS", "PostgreSQL", "Docker"]
+      "name": "Morning Bakery",
+      "link": "https://morning-bakery.vercel.app/",
+      "description": "Morning Bakery is an e-commerce web application for selling bakery items.",
+      "tools": ["PHP", "Laravel", "MySQL", "Next.js", "TypeScript", "Next Auth", "Docker"]
+    },
+    {
+      "name": "Property Finder",
+      "link": "https://property-finder-teal.vercel.app/",
+      "description": "Property Finder is a web app for renting and selling properties.",
+      "tools": ["Node.js", "NestJS", "TypeScript", "TypeORM", "Postgres", "Next.js", "Authentication", "Docker"]
     }
   ],
   "education": [
