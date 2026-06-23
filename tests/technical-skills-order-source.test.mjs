@@ -5,6 +5,7 @@ import assert from 'node:assert/strict';
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
 const pageSource = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
+const apiRouteSource = await readFile(new URL('../app/api/generate-pdf/route.ts', import.meta.url), 'utf8');
 
 test('CvContext exposes render-order setting and sends wrapped PDF payload', () => {
   assert.match(contextSource, /placeTechnicalSkillsAfterSummary:\s*boolean;/);
@@ -61,4 +62,20 @@ test('PDF generator exposes the render option and conditionally orders sections'
     generatorSource,
     /if \(options\.placeTechnicalSkillsAfterSummary\) \{[\s\S]*renderTechnicalSkillsSection\([\s\S]*renderExperienceSection\([\s\S]*\} else \{[\s\S]*renderExperienceSection\([\s\S]*renderTechnicalSkillsSection\([\s\S]*\}[\s\S]*renderEducationSection\(/,
   );
+});
+
+test('API route accepts wrapped and raw CV request bodies', () => {
+  assert.match(
+    apiRouteSource,
+    /import type \{ PDFGenerationOptions \} from '@\/lib\/pdf\/generator';/,
+  );
+  assert.match(
+    apiRouteSource,
+    /function getGeneratePdfPayload\(body: unknown\): \{ cvData: unknown; options: PDFGenerationOptions \}/,
+  );
+  assert.match(apiRouteSource, /'cvData' in body/);
+  assert.match(apiRouteSource, /return \{ cvData: body\.cvData, options: normalizeGeneratePdfOptions\(body\.options\) \};/);
+  assert.match(apiRouteSource, /return \{ cvData: body, options: \{\} \};/);
+  assert.match(apiRouteSource, /const validationResult = CVDataSchema\.safeParse\(cvData\);/);
+  assert.match(apiRouteSource, /const pdfBuffer = await generatePDFBuffer\(validationResult\.data, options\);/);
 });
