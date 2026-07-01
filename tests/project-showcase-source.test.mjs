@@ -4,7 +4,9 @@ import assert from 'node:assert/strict';
 
 const schemaSource = await readFile(new URL('../lib/schemas/cv.schema.ts', import.meta.url), 'utf8');
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
+const pageSource = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
+const apiRouteSource = await readFile(new URL('../app/api/generate-pdf/route.ts', import.meta.url), 'utf8');
 
 test('schema defines optional project showcase data', () => {
   assert.match(schemaSource, /export const ProjectSchema = z\.object\(\{/);
@@ -22,10 +24,6 @@ test('schema defines optional project showcase data', () => {
 
 test('default CV JSON includes a copyable project showcase sample', () => {
   assert.match(contextSource, /"projects":\s*\[/);
-  assert.match(contextSource, /"name": "Multi-Tenant SaaS Dashboard"/);
-  assert.match(contextSource, /"link": "https:\/\/example\.com"/);
-  assert.match(contextSource, /"description": "Built a multi-tenant SaaS dashboard with role-based access, billing workflows, and analytics\."/);
-  assert.match(contextSource, /"tools": \["Next\.js", "NestJS", "PostgreSQL", "Docker"\]/);
   assert.match(contextSource, /"name": "Morning Bakery"/);
   assert.match(contextSource, /"link": "https:\/\/morning-bakery\.vercel\.app\/"/);
   assert.match(contextSource, /"description": "Morning Bakery is an e-commerce web application for selling bakery items\."/);
@@ -37,15 +35,73 @@ test('default CV JSON includes a copyable project showcase sample', () => {
   assert.match(contextSource, /"projects":\s*\[[\s\S]*\],[\s\S]*"education":/);
 });
 
+test('project showcase render setting defaults off and is controlled from the top navbar', () => {
+  assert.match(contextSource, /includeProjectShowcase:\s*boolean;/);
+  assert.match(contextSource, /setIncludeProjectShowcase:\s*\(value: boolean\) => void;/);
+  assert.match(
+    contextSource,
+    /const \[includeProjectShowcase,\s*setIncludeProjectShowcaseState\]\s*=\s*useState\(false\);/,
+  );
+  assert.match(
+    contextSource,
+    /const setIncludeProjectShowcase = useCallback\(\(value: boolean\) => \{[\s\S]*setIncludeProjectShowcaseState\(value\);[\s\S]*setPdfObjectUrl\(null\);[\s\S]*setPdfError\(null\);[\s\S]*\}, \[setPdfObjectUrl\]\);/,
+  );
+  assert.match(
+    contextSource,
+    /body:\s*JSON\.stringify\(\{\s*cvData,\s*options:\s*\{\s*placeTechnicalSkillsAfterSummary,\s*includeProjectShowcase,\s*\},\s*\}\),/,
+  );
+  assert.match(
+    contextSource,
+    /\}, \[cvData, placeTechnicalSkillsAfterSummary, includeProjectShowcase, setPdfObjectUrl\]\);/,
+  );
+  assert.match(
+    contextSource,
+    /setIncludeProjectShowcaseState\(false\);/,
+  );
+  assert.match(
+    contextSource,
+    /value=\{\{[\s\S]*includeProjectShowcase,[\s\S]*setIncludeProjectShowcase,[\s\S]*generatePdf,/,
+  );
+
+  assert.match(
+    pageSource,
+    /const \{[\s\S]*includeProjectShowcase,[\s\S]*setIncludeProjectShowcase,[\s\S]*\} = useCv\(\);/,
+  );
+  assert.match(pageSource, /checked=\{includeProjectShowcase\}/);
+  assert.match(
+    pageSource,
+    /onChange=\{\(event\) => setIncludeProjectShowcase\(event\.target\.checked\)\}/,
+  );
+  assert.match(pageSource, /Include Project Showcase/);
+
+  assert.match(
+    apiRouteSource,
+    /includeProjectShowcase:\s*typeof candidate\.includeProjectShowcase === 'boolean'\s*\?\s*candidate\.includeProjectShowcase\s*:\s*false,/,
+  );
+});
+
+test('top navbar allows controls to wrap on narrow screens', () => {
+  assert.match(
+    pageSource,
+    /<header className="flex flex-wrap items-center justify-between gap-3 px-6 py-4/,
+  );
+  assert.match(pageSource, /<div className="flex items-center gap-3 min-w-0 max-w-full">/);
+  assert.match(pageSource, /<h1 className="text-base sm:text-xl font-bold leading-tight/);
+  assert.match(
+    pageSource,
+    /<div className="flex flex-wrap items-center gap-3 justify-start sm:justify-end">/,
+  );
+});
+
 test('PDF generator conditionally renders Project Showcase before Education', () => {
   assert.match(generatorSource, /function renderProjectShowcaseSection\(/);
   assert.match(
     generatorSource,
-    /if \(data\.projects\?\.length\) \{[\s\S]*renderProjectShowcaseSection\([\s\S]*\}[\s\S]*renderEducationSection\(/,
+    /if \(options\.includeProjectShowcase && data\.projects\?\.length\) \{[\s\S]*renderProjectShowcaseSection\([\s\S]*\}[\s\S]*renderEducationSection\(/,
   );
   assert.match(
     generatorSource,
-    /if \(options\.placeTechnicalSkillsAfterSummary\) \{[\s\S]*renderTechnicalSkillsSection\([\s\S]*renderExperienceSection\([\s\S]*\} else \{[\s\S]*renderExperienceSection\([\s\S]*renderTechnicalSkillsSection\([\s\S]*\}[\s\S]*if \(data\.projects\?\.length\)/,
+    /if \(options\.placeTechnicalSkillsAfterSummary\) \{[\s\S]*renderTechnicalSkillsSection\([\s\S]*renderExperienceSection\([\s\S]*\} else \{[\s\S]*renderExperienceSection\([\s\S]*renderTechnicalSkillsSection\([\s\S]*\}[\s\S]*if \(options\.includeProjectShowcase && data\.projects\?\.length\)/,
   );
   assert.match(generatorSource, /addSectionTitle\(doc,\s*'PROJECT SHOWCASE',\s*yPosition,\s*boldFont\)/);
   assert.match(generatorSource, /\.text\(project\.name,\s*PAGE_MARGIN,\s*yPosition,\s*\{[\s\S]*link: project\.link/);

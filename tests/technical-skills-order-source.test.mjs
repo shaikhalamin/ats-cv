@@ -20,11 +20,11 @@ test('CvContext exposes render-order setting and sends wrapped PDF payload', () 
   );
   assert.match(
     contextSource,
-    /body:\s*JSON\.stringify\(\{\s*cvData,\s*options:\s*\{\s*placeTechnicalSkillsAfterSummary,\s*\},\s*\}\),/,
+    /body:\s*JSON\.stringify\(\{\s*cvData,\s*options:\s*\{\s*placeTechnicalSkillsAfterSummary,\s*includeProjectShowcase,\s*\},\s*\}\),/,
   );
   assert.match(
     contextSource,
-    /\}, \[cvData, placeTechnicalSkillsAfterSummary, setPdfObjectUrl\]\);/,
+    /\}, \[cvData, placeTechnicalSkillsAfterSummary, includeProjectShowcase, setPdfObjectUrl\]\);/,
   );
   assert.match(
     contextSource,

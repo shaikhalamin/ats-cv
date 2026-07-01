@@ -29,6 +29,8 @@ interface CvContextType {
   // Render settings
   placeTechnicalSkillsAfterSummary: boolean;
   setPlaceTechnicalSkillsAfterSummary: (value: boolean) => void;
+  includeProjectShowcase: boolean;
+  setIncludeProjectShowcase: (value: boolean) => void;
 
   // Actions
   generatePdf: () => Promise<void>;
@@ -214,6 +216,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
 
   // Render settings
   const [placeTechnicalSkillsAfterSummary, setPlaceTechnicalSkillsAfterSummaryState] = useState(false);
+  const [includeProjectShowcase, setIncludeProjectShowcaseState] = useState(false);
 
   const setPdfObjectUrl = useCallback((nextPdfUrl: string | null) => {
     if (pdfUrlRef.current) {
@@ -226,6 +229,12 @@ export function CvProvider({ children }: { children: ReactNode }) {
 
   const setPlaceTechnicalSkillsAfterSummary = useCallback((value: boolean) => {
     setPlaceTechnicalSkillsAfterSummaryState(value);
+    setPdfObjectUrl(null);
+    setPdfError(null);
+  }, [setPdfObjectUrl]);
+
+  const setIncludeProjectShowcase = useCallback((value: boolean) => {
+    setIncludeProjectShowcaseState(value);
     setPdfObjectUrl(null);
     setPdfError(null);
   }, [setPdfObjectUrl]);
@@ -284,6 +293,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
           cvData,
           options: {
             placeTechnicalSkillsAfterSummary,
+            includeProjectShowcase,
           },
         }),
       });
@@ -301,7 +311,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsGenerating(false);
     }
-  }, [cvData, placeTechnicalSkillsAfterSummary, setPdfObjectUrl]);
+  }, [cvData, placeTechnicalSkillsAfterSummary, includeProjectShowcase, setPdfObjectUrl]);
 
   // Auto-generate PDF preview on first load
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -332,6 +342,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
     setJsonStringState(DEFAULT_CV_JSON);
     validateAndUpdateData(DEFAULT_CV_JSON);
     setPlaceTechnicalSkillsAfterSummaryState(false);
+    setIncludeProjectShowcaseState(false);
     setPdfObjectUrl(null);
     setPdfError(null);
   }, [setPdfObjectUrl, validateAndUpdateData]);
@@ -349,6 +360,8 @@ export function CvProvider({ children }: { children: ReactNode }) {
         pdfError,
         placeTechnicalSkillsAfterSummary,
         setPlaceTechnicalSkillsAfterSummary,
+        includeProjectShowcase,
+        setIncludeProjectShowcase,
         generatePdf,
         downloadPdf,
         resetToDefault,

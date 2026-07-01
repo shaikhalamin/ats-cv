@@ -25,12 +25,19 @@ function normalizeGeneratePdfOptions(options: unknown): PDFGenerationOptions {
     return {};
   }
 
-  const candidate = options as { placeTechnicalSkillsAfterSummary?: unknown };
+  const candidate = options as {
+    placeTechnicalSkillsAfterSummary?: unknown;
+    includeProjectShowcase?: unknown;
+  };
 
   return {
     placeTechnicalSkillsAfterSummary:
       typeof candidate.placeTechnicalSkillsAfterSummary === 'boolean'
         ? candidate.placeTechnicalSkillsAfterSummary
+        : false,
+    includeProjectShowcase:
+      typeof candidate.includeProjectShowcase === 'boolean'
+        ? candidate.includeProjectShowcase
         : false,
   };
 }

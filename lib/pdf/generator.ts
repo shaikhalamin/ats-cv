@@ -6,6 +6,7 @@ import type { CVData } from '../schemas/cv.schema';
 
 export interface PDFGenerationOptions {
   placeTechnicalSkillsAfterSummary?: boolean;
+  includeProjectShowcase?: boolean;
 }
 
 type CheckPageBreak = (requiredSpace: number, yPosition: number) => number;
@@ -471,7 +472,7 @@ export async function generatePDFBuffer(
         });
       }
 
-      if (data.projects?.length) {
+      if (options.includeProjectShowcase && data.projects?.length) {
         yPosition = renderProjectShowcaseSection({
           doc,
           data,
