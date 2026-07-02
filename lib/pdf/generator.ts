@@ -238,7 +238,7 @@ export async function generatePDFBuffer(
 
       // ========== HEADER ==========
       // Photo dimensions and positioning
-      const PHOTO_SIZE = 70; // Standard photo size (square)
+      const PHOTO_SIZE = 60; // Standard photo size (square)
       const PHOTO_MARGIN = 10;
       const hasPhoto = data.personalDetails.photo && data.personalDetails.photo.length > 0;
 
