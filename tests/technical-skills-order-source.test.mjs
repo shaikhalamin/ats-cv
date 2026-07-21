@@ -62,6 +62,10 @@ test('PDF generator exposes the render option and conditionally orders sections'
     generatorSource,
     /if \(options\.placeTechnicalSkillsAfterSummary\) \{[\s\S]*renderTechnicalSkillsSection\([\s\S]*renderExperienceSection\([\s\S]*\} else \{[\s\S]*renderExperienceSection\([\s\S]*renderTechnicalSkillsSection\([\s\S]*\}[\s\S]*renderEducationSection\(/,
   );
+  assert.match(
+    generatorSource,
+    /if \(options\.placeTechnicalSkillsAfterSummary\) \{\s*yPosition = renderTechnicalSkillsSection\(\{[\s\S]*?\}\);\s*yPosition \+= 6;\s*yPosition = renderExperienceSection\(\{/,
+  );
 });
 
 test('API route accepts wrapped and raw CV request bodies', () => {

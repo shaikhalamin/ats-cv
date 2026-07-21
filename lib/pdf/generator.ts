@@ -445,6 +445,7 @@ export async function generatePDFBuffer(
           boldFont,
           regularFont,
         });
+        yPosition += 6;
         yPosition = renderExperienceSection({
           doc,
           data,
