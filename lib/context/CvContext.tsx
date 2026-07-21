@@ -61,7 +61,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Tixio IO",
       "role": "Senior Fullstack Engineer",
       "period": "February 2025 - Present",
-      "location": "Dhaka, Bangladesh (Remote)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Lead backend development for Vadio (real-time video consultation) and the HR & CRM platform — designing RESTful APIs, WebSocket integrations, and session management with NestJS, MongoDB, and Prisma ORM.",
         "Design event-driven microservice communication using NATS messaging and BullMQ job queues for async processing (notifications, reporting, data sync) across independently deployable services.",
@@ -74,7 +74,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Liberate Labs",
       "role": "Lead Fullstack Developer",
       "period": "April 2024 - January 2025",
-      "location": "Dhaka, Bangladesh (Remote)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Led three cross-functional teams delivering SaaS products across e-commerce, legal tech (NDA platform), and education (LMS) — owning technical architecture and client communication.",
         "Architected domain-driven APIs using NestJS and TypeScript with PostgreSQL and MongoDB, implementing JWT authentication, RBAC, and multi-tenant data isolation.",
@@ -86,7 +86,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Tikweb BD",
       "role": "Senior Software Engineer",
       "period": "March 2023 - April 2024",
-      "location": "Dhaka, Bangladesh (Denmark Based)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Owned backend development for consumer-facing Photo and Planner applications — building REST APIs with NestJS, TypeORM, and MySQL for image processing, subscriptions, and user management.",
         "Designed multi-queue architectures (Firebase Cloud Messaging, Redis-Queue) for background job processing including push notifications and data synchronization.",
@@ -98,7 +98,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Venturas Ltd",
       "role": "Senior Fullstack Engineer",
       "period": "February 2021 - March 2023",
-      "location": "Dhaka, Bangladesh (Japan Based)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Architected RESTful microservice APIs using NestJS and TypeScript for a Property Management Application — handling property listings, tenant management, lease tracking, and payment workflows.",
         "Developed React admin portal for property managers and managed AWS infrastructure (EC2, RDS, S3) with CI/CD pipelines.",
@@ -110,7 +110,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Wipro Limited",
       "role": "Senior Software Engineer",
       "period": "September 2019 - January 2021",
-      "location": "Dhaka, Bangladesh (India Based)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Built and maintained ERP modules (IExpense, Shared Service, TMS) with CakePHP and MySQL — developing RESTful APIs with JWT authentication and role-based access control for web and mobile clients.",
         "Optimized SQL queries for high-volume transactional data and deployed applications on AWS infrastructure across multi-geography Agile teams."
@@ -121,7 +121,7 @@ const DEFAULT_CV_JSON = `{
       "company": "Teamnet",
       "role": "Software Engineer",
       "period": "April 2016 - August 2019",
-      "location": "Dhaka, Bangladesh (USA Based)",
+      "location": "Dhaka, Bangladesh",
       "achievements": [
         "Built Volatour travel booking platform using Laravel and MySQL — integrating SOAP and REST APIs from third-party providers for flights, hotels, and payment processing pipelines.",
         "Developed RESTful APIs and React admin portal for booking management; deployed on DigitalOcean with server configuration and database administration."
