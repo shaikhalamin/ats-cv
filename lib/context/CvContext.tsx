@@ -44,7 +44,7 @@ const CvContext = createContext<CvContextType | null>(null);
 const DEFAULT_CV_JSON = `{
   "personalDetails": {
     "name": "Shaikh Al Amin",
-    "title": "Lead Fullstack Engineer",
+    "title": "Senior Fullstack Engineer",
     "phone": "+8801712341937",
     "email": "alamin.cse15@gmail.com",
     "location": "Dhaka, Bangladesh",
@@ -55,7 +55,7 @@ const DEFAULT_CV_JSON = `{
     "linkedin": "linkedin.com/in/shaikh-al-amin",
     "portfolio": "shaikhalamin.dev"
   },
-  "professionalSummary": "Solution architect and backend specialist with 9+ years building scalable distributed systems. I design event-driven microservices architectures using Node.js, NestJS, Postgres, RabbitMQ, NATS, and Redis, transforming monolithic applications into resilient, decoupled systems. Currently architecting an all-in-one business platform at Tixio, decomposing HR, CRM, and WebRTC video consultation into independently deployable services with robust message-driven communication patterns.",
+  "professionalSummary": "Senior Fullstack Engineer with 9+ years of experience building scalable SaaS and enterprise applications using Node.js, NestJS, React, Next.js, TypeScript, PostgreSQL and MySQL. Skilled in microservices, REST APIs, WebSockets, authentication, database optimization, Redis, BullMQ, Docker, CI/CD, AWS, and GCP. Proven technical leader with experience in architecture, code reviews, mentoring, and delivering secure, maintainable products from design to production.",
   "experience": [
     {
       "company": "Tixio IO",
@@ -137,7 +137,6 @@ const DEFAULT_CV_JSON = `{
         "Event-Driven Architecture",
         "RabbitMQ",
         "BullMQ",
-        "NATS",
         "Redis Pub/Sub"
       ]
     },
