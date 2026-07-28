@@ -172,6 +172,10 @@ const DEFAULT_CV_JSON = `{
     {
       "category": "Cloud Platform/VM",
       "skills": ["AWS", "GCP", "VPC", "EC2", "EB", "RDS", "S3", "Docker"]
+    },
+    {
+      "category": "AI/LLM",
+      "skills": ["Codex", "Claude", "ChatGPT"]
     }
   ],
   "projects": [
