@@ -77,7 +77,7 @@ const DEFAULT_CV_JSON = `{
       "location": "Dhaka, Bangladesh",
       "achievements": [
         "Led three cross-functional teams delivering SaaS products across e-commerce, legal tech (NDA platform), and education (LMS) — owning technical architecture and client communication.",
-        "Architected domain-driven APIs using NestJS and TypeScript with PostgreSQL and MongoDB, implementing JWT authentication, RBAC, and multi-tenant data isolation.",
+        "Architected rest APIs using NestJS and TypeScript with PostgreSQL and MongoDB, implementing JWT authentication, RBAC, and multi-tenant data isolation.",
         "Managed AWS infrastructure (EC2, RDS, S3) with CI/CD pipelines, and mentored developers through code reviews and pair programming."
       ],
       "techStack": "Node.js, NestJS, Express.js, TypeScript, React, PostgreSQL, MongoDB, AWS, JWT, CI/CD"
