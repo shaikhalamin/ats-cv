@@ -15,7 +15,10 @@ test('configures react-pdf without effect-managed dynamic imports', () => {
   assert.doesNotMatch(cvPreviewSource, /setPdfjsLoaded|pdfjsLoaded|mounted|setMounted/);
 
   assert.match(pdfPreviewDocumentSource, /import\s+\{\s*Document,\s*Page,\s*pdfjs\s*\}\s+from\s+'react-pdf'/);
-  assert.match(pdfPreviewDocumentSource, /pdfjs\.GlobalWorkerOptions\.workerSrc\s*=\s*new URL\(/);
+  assert.match(
+    pdfPreviewDocumentSource,
+    /pdfjs\.GlobalWorkerOptions\.workerSrc\s*=\s*`https:\/\/cdn\.jsdelivr\.net\/npm\/pdfjs-dist@\$\{pdfjs\.version\}\/build\/pdf\.worker\.min\.mjs`;/,
+  );
 });
 
 test('keys the loaded page count by the current PDF data', () => {

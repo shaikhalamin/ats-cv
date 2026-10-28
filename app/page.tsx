@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
-import { preload } from 'react-dom';
+import { preconnect, preload } from 'react-dom';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import DownloadButton from '@/components/DownloadButton';
@@ -48,12 +48,10 @@ export default function Home() {
     numPages: number;
   } | null>(null);
 
-  // pdf.js only requests the PDF after its worker starts, and only loads the worker after
-  // the viewer chunk, so start both downloads early instead of one after the other
+  // pdf.js only requests the PDF after its worker starts, so fetch the PDF with the HTML
+  // and open the connection to the worker's CDN before the viewer asks for it
   preload(DEFAULT_PDF_URL, { as: 'fetch', crossOrigin: 'anonymous' });
-  useEffect(() => {
-    fetch(new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url)).catch(() => {});
-  }, []);
+  preconnect('https://cdn.jsdelivr.net', { crossOrigin: 'anonymous' });
 
   // Edits made on the Settings page clear the PDF; regenerate it when shown here
   useEffect(() => {
