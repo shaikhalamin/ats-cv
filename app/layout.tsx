@@ -11,6 +11,8 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  // Only used in Settings validation errors; don't compete with the CV download on every page
+  preload: false,
 });
 
 export const metadata: Metadata = {

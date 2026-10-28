@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
+const defaultsSource = await readFile(new URL('../lib/defaultCv.ts', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
 const pdfPreviewDocumentSource = await readFile(
   new URL('../components/PdfPreviewDocument.tsx', import.meta.url),
@@ -10,8 +11,8 @@ const pdfPreviewDocumentSource = await readFile(
 );
 
 test('uses a local optimized photo asset by default', async () => {
-  assert.match(contextSource, /"photo": "\/cv-photo\.jpg"/);
-  assert.doesNotMatch(contextSource, /raw\.githubusercontent\.com/);
+  assert.match(defaultsSource, /"photo": "\/cv-photo\.jpg"/);
+  assert.doesNotMatch(defaultsSource, /raw\.githubusercontent\.com/);
 
   const optimizedPhoto = await stat(new URL('../public/cv-photo.jpg', import.meta.url));
   assert.ok(

@@ -1,11 +1,13 @@
 'use client';
 
 import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import { preload } from 'react-dom';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import DownloadButton from '@/components/DownloadButton';
 import Button from '@/components/ui/Button';
 import { useCv } from '@/lib/context/CvContext';
+import { DEFAULT_PDF_URL } from '@/lib/defaultCv';
 
 const PdfPreviewDocument = dynamic(
   () => import('@/components/PdfPreviewDocument'),
@@ -33,10 +35,25 @@ export default function Home() {
     () => A4_WIDTH,
   );
   const scale = Math.min(MAX_SCALE, (viewportWidth - PAGE_GUTTER) / A4_WIDTH);
+  const screenPixelRatio = useSyncExternalStore(
+    subscribeToResize,
+    () => window.devicePixelRatio,
+    () => 1,
+  );
+  // On narrow screens the page is shrunk to fit; render at full PDF resolution anyway
+  // so pinch-zooming up to 100% stays sharp
+  const devicePixelRatio = screenPixelRatio * Math.max(1, 1 / scale);
   const [loadedDocument, setLoadedDocument] = useState<{
     pdfUrl: string;
     numPages: number;
   } | null>(null);
+
+  // pdf.js only requests the PDF after its worker starts, and only loads the worker after
+  // the viewer chunk, so start both downloads early instead of one after the other
+  preload(DEFAULT_PDF_URL, { as: 'fetch', crossOrigin: 'anonymous' });
+  useEffect(() => {
+    fetch(new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url)).catch(() => {});
+  }, []);
 
   // Edits made on the Settings page clear the PDF; regenerate it when shown here
   useEffect(() => {
@@ -58,14 +75,40 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-200 dark:bg-gray-950">
-      <header className="sticky top-0 z-10 flex items-center justify-end gap-4 px-4 sm:px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-        <Link
-          href="/settings"
-          className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-        >
-          Settings
-        </Link>
-        <DownloadButton />
+      <header className="sm:sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex items-center gap-3 min-w-0">
+          <svg
+            aria-hidden="true"
+            className="w-8 h-8 flex-shrink-0 text-blue-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-xl font-bold leading-tight text-gray-900 dark:text-white">
+              Curriculum Vitae
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              Shaikh Al Amin CV. Read it below or download the PDF.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/settings"
+            className="py-2 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+          >
+            Settings
+          </Link>
+          <DownloadButton />
+        </div>
       </header>
 
       <main className="flex-1 py-6">
@@ -74,6 +117,7 @@ export default function Home() {
             pdfUrl={pdfUrl}
             numPages={numPages}
             scale={scale}
+            devicePixelRatio={devicePixelRatio}
             onLoadSuccess={onDocumentLoadSuccess}
           />
         ) : !isValid ? (
@@ -98,11 +142,12 @@ export default function Home() {
 
 function Spinner() {
   return (
-    <div className="flex justify-center pt-24">
+    <div className="flex flex-col items-center gap-4 pt-24 text-gray-600 dark:text-gray-400">
       <div
         aria-hidden="true"
         className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"
       />
+      <p>Loading CV...</p>
     </div>
   );
 }

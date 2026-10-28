@@ -3,6 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
+const defaultsSource = await readFile(new URL('../lib/defaultCv.ts', import.meta.url), 'utf8');
 const pageSource = await readFile(new URL('../app/settings/page.tsx', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
 const apiRouteSource = await readFile(new URL('../app/api/generate-pdf/route.ts', import.meta.url), 'utf8');
@@ -12,8 +13,9 @@ test('CvContext exposes render-order setting and sends wrapped PDF payload', () 
   assert.match(contextSource, /setPlaceTechnicalSkillsAfterSummary:\s*\(value: boolean\) => void;/);
   assert.match(
     contextSource,
-    /const \[placeTechnicalSkillsAfterSummary,\s*setPlaceTechnicalSkillsAfterSummaryState\]\s*=\s*useState\(true\);/,
+    /const \[placeTechnicalSkillsAfterSummary,\s*setPlaceTechnicalSkillsAfterSummaryState\]\s*=\s*useState\(\s*DEFAULT_RENDER_OPTIONS\.placeTechnicalSkillsAfterSummary,\s*\);/,
   );
+  assert.match(defaultsSource, /placeTechnicalSkillsAfterSummary: true,/);
   assert.match(
     contextSource,
     /const setPlaceTechnicalSkillsAfterSummary = useCallback\(\(value: boolean\) => \{[\s\S]*setPlaceTechnicalSkillsAfterSummaryState\(value\);[\s\S]*setPdfObjectUrl\(null\);[\s\S]*setPdfError\(null\);[\s\S]*\}, \[setPdfObjectUrl\]\);/,

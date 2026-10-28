@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 
 const schemaSource = await readFile(new URL('../lib/schemas/cv.schema.ts', import.meta.url), 'utf8');
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
+const defaultsSource = await readFile(new URL('../lib/defaultCv.ts', import.meta.url), 'utf8');
 const pageSource = await readFile(new URL('../app/settings/page.tsx', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
 const apiRouteSource = await readFile(new URL('../app/api/generate-pdf/route.ts', import.meta.url), 'utf8');
@@ -23,16 +24,16 @@ test('schema defines optional project showcase data', () => {
 });
 
 test('default CV JSON includes a copyable project showcase sample', () => {
-  assert.match(contextSource, /"projects":\s*\[/);
-  assert.match(contextSource, /"name": "Morning Bakery"/);
-  assert.match(contextSource, /"link": "https:\/\/morning-bakery\.vercel\.app\/"/);
-  assert.match(contextSource, /"description": "Morning Bakery is an e-commerce web application for selling bakery items\."/);
-  assert.match(contextSource, /"tools": \["PHP", "Laravel", "MySQL", "Next\.js", "TypeScript", "Next Auth", "Docker"\]/);
-  assert.match(contextSource, /"name": "Property Finder"/);
-  assert.match(contextSource, /"link": "https:\/\/property-finder-teal\.vercel\.app\/"/);
-  assert.match(contextSource, /"description": "Property Finder is a web app for renting and selling properties\."/);
-  assert.match(contextSource, /"tools": \["Node\.js", "NestJS", "TypeScript", "TypeORM", "Postgres", "Next\.js", "Authentication", "Docker"\]/);
-  assert.match(contextSource, /"projects":\s*\[[\s\S]*\],[\s\S]*"education":/);
+  assert.match(defaultsSource, /"projects":\s*\[/);
+  assert.match(defaultsSource, /"name": "Morning Bakery"/);
+  assert.match(defaultsSource, /"link": "https:\/\/morning-bakery\.vercel\.app\/"/);
+  assert.match(defaultsSource, /"description": "Morning Bakery is an e-commerce web application for selling bakery items\."/);
+  assert.match(defaultsSource, /"tools": \["PHP", "Laravel", "MySQL", "Next\.js", "TypeScript", "Next Auth", "Docker"\]/);
+  assert.match(defaultsSource, /"name": "Property Finder"/);
+  assert.match(defaultsSource, /"link": "https:\/\/property-finder-teal\.vercel\.app\/"/);
+  assert.match(defaultsSource, /"description": "Property Finder is a web app for renting and selling properties\."/);
+  assert.match(defaultsSource, /"tools": \["Node\.js", "NestJS", "TypeScript", "TypeORM", "Postgres", "Next\.js", "Authentication", "Docker"\]/);
+  assert.match(defaultsSource, /"projects":\s*\[[\s\S]*\],[\s\S]*"education":/);
 });
 
 test('project showcase render setting defaults off and is controlled from the top navbar', () => {
@@ -40,8 +41,9 @@ test('project showcase render setting defaults off and is controlled from the to
   assert.match(contextSource, /setIncludeProjectShowcase:\s*\(value: boolean\) => void;/);
   assert.match(
     contextSource,
-    /const \[includeProjectShowcase,\s*setIncludeProjectShowcaseState\]\s*=\s*useState\(false\);/,
+    /const \[includeProjectShowcase,\s*setIncludeProjectShowcaseState\]\s*=\s*useState\(\s*DEFAULT_RENDER_OPTIONS\.includeProjectShowcase,\s*\);/,
   );
+  assert.match(defaultsSource, /includeProjectShowcase: false,/);
   assert.match(
     contextSource,
     /const setIncludeProjectShowcase = useCallback\(\(value: boolean\) => \{[\s\S]*setIncludeProjectShowcaseState\(value\);[\s\S]*setPdfObjectUrl\(null\);[\s\S]*setPdfError\(null\);[\s\S]*\}, \[setPdfObjectUrl\]\);/,
@@ -56,7 +58,7 @@ test('project showcase render setting defaults off and is controlled from the to
   );
   assert.match(
     contextSource,
-    /setIncludeProjectShowcaseState\(false\);/,
+    /setIncludeProjectShowcaseState\(DEFAULT_RENDER_OPTIONS\.includeProjectShowcase\);/,
   );
   assert.match(
     contextSource,

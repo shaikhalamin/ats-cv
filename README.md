@@ -13,6 +13,7 @@ Create a polished, text-forward CV from structured JSON, validate it as you edit
 
 ## Features
 
+- **CV home page:** `/` shows only the rendered CV with a **Download PDF** button. The default CV is prerendered to `/cv.pdf` at build time and served as a static file, so the page doesn't wait on PDF generation.
 - **Structured CV editing:** Edit the bundled CV template in a Monaco Editor configured for JSON.
 - **Immediate validation:** JSON syntax and the Zod CV schema are checked on every edit, with field-level errors shown in the validation panel.
 - **Server-generated PDF:** A Node.js API route renders the validated data as an A4 PDF with PDFKit and bundled Roboto fonts.
@@ -23,13 +24,15 @@ Create a polished, text-forward CV from structured JSON, validate it as you edit
 
 ## How it works
 
-1. Edit the CV object in the left-hand Monaco JSON editor.
+1. Open **Settings** (`/settings`) and edit the CV object in the left-hand Monaco JSON editor.
 2. The client parses the JSON and validates it with Zod. Syntax or schema errors appear with their field path, clear the current PDF, and disable Preview.
 3. Choose either render option if needed: **Technical Skills after Professional Summary** or **Include Project Showcase**.
 4. Click **Preview** or **Refresh**. The client posts the validated CV and options to `/api/generate-pdf`, where the Node.js route validates the CV again and PDFKit generates an A4 PDF.
 5. The client reads the response as a `Blob`, creates an object URL, and gives that same PDF to the multi-page React PDF preview and the download action.
 
-The browser download removes whitespace from the CV title and name and saves a file such as `SeniorEngineer_JaneDoe_cv.pdf`. **Reset** restores the bundled CV JSON, turns both render options off, and clears the generated PDF.
+The browser download removes whitespace from the CV title and name and saves a file such as `SeniorEngineer_JaneDoe_cv.pdf`. **Reset** restores the bundled CV JSON, the default render options, and the prerendered default PDF.
+
+Edits made on Settings carry over to the home page until the browser reloads. To change the CV that the home page shows on first load, edit `DEFAULT_CV_JSON` and `DEFAULT_RENDER_OPTIONS` in [`lib/defaultCv.ts`](./lib/defaultCv.ts) and redeploy; `/cv.pdf` is regenerated during `npm run build`.
 
 ## CV JSON format
 
@@ -125,7 +128,7 @@ Arrays marked as required must contain at least one item. Strings marked as requ
 
 ### Render options
 
-- **Technical Skills after Professional Summary** defaults to off. Enable it to render Professional Summary, Technical Skills, Experience, optional Project Showcase, then Education.
+- **Technical Skills after Professional Summary** defaults to on (set in `DEFAULT_RENDER_OPTIONS`). Enable it to render Professional Summary, Technical Skills, Experience, optional Project Showcase, then Education.
 - **Include Project Showcase** defaults to off. Enable it to render `projects` after Experience and Technical Skills and before Education; the section is still omitted when `projects` is missing or empty.
 - Changing either option clears the old preview. Click **Preview** or **Refresh** to generate a PDF with the new settings.
 
@@ -173,11 +176,14 @@ To exercise the optimized application locally after the build, run `npm run star
 .
 ├── app/
 │   ├── api/generate-pdf/route.ts  # Node.js PDF endpoint
+│   ├── cv.pdf/route.ts            # Default CV PDF, prerendered at build time
 │   ├── layout.tsx                 # Metadata and CV context provider
-│   └── page.tsx                   # Split editor/preview interface
+│   ├── page.tsx                   # Home: rendered CV and download
+│   └── settings/page.tsx          # Split editor/preview interface
 ├── components/                    # Editor, validation, preview, and controls
 ├── lib/
 │   ├── context/CvContext.tsx      # CV state, validation, request, and download flow
+│   ├── defaultCv.ts               # Default CV JSON and render options
 │   ├── pdf/generator.ts           # A4 PDFKit renderer
 │   └── schemas/cv.schema.ts       # Zod CV schema and parsing helpers
 ├── public/                        # Fonts and bundled image assets
@@ -186,7 +192,7 @@ To exercise the optimized application locally after the build, run `npm run star
 └── vercel.json                    # PDF function resource settings
 ```
 
-Key entry points: [`app/page.tsx`](./app/page.tsx), [`components/JsonEditor.tsx`](./components/JsonEditor.tsx), [`components/CvPreview.tsx`](./components/CvPreview.tsx), [`lib/context/CvContext.tsx`](./lib/context/CvContext.tsx), [`lib/schemas/cv.schema.ts`](./lib/schemas/cv.schema.ts), [`lib/pdf/generator.ts`](./lib/pdf/generator.ts), and [`app/api/generate-pdf/route.ts`](./app/api/generate-pdf/route.ts).
+Key entry points: [`app/page.tsx`](./app/page.tsx), [`app/settings/page.tsx`](./app/settings/page.tsx), [`lib/defaultCv.ts`](./lib/defaultCv.ts), [`components/JsonEditor.tsx`](./components/JsonEditor.tsx), [`components/CvPreview.tsx`](./components/CvPreview.tsx), [`lib/context/CvContext.tsx`](./lib/context/CvContext.tsx), [`lib/schemas/cv.schema.ts`](./lib/schemas/cv.schema.ts), [`lib/pdf/generator.ts`](./lib/pdf/generator.ts), and [`app/api/generate-pdf/route.ts`](./app/api/generate-pdf/route.ts).
 
 ## Data flow
 

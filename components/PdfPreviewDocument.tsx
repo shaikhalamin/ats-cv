@@ -13,6 +13,7 @@ export interface PdfPreviewDocumentProps {
   pdfUrl: string;
   numPages: number | null;
   scale: number;
+  devicePixelRatio?: number;
   onLoadSuccess: ({ numPages }: { numPages: number }) => void;
 }
 
@@ -20,6 +21,7 @@ export default function PdfPreviewDocument({
   pdfUrl,
   numPages,
   scale,
+  devicePixelRatio,
   onLoadSuccess,
 }: PdfPreviewDocumentProps) {
   return (
@@ -47,6 +49,7 @@ export default function PdfPreviewDocument({
                 key={`page_${index + 1}`}
                 pageNumber={index + 1}
                 scale={scale}
+                devicePixelRatio={devicePixelRatio}
                 className="mb-4 shadow-lg"
                 renderTextLayer
                 renderAnnotationLayer
