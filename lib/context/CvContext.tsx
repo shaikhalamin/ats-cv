@@ -214,6 +214,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const pdfUrlRef = useRef<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const isGeneratingRef = useRef(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   // Render settings
@@ -280,8 +281,10 @@ export function CvProvider({ children }: { children: ReactNode }) {
 
   // Generate PDF via API
   const generatePdf = useCallback(async () => {
-    if (!cvData) return;
+    // Skip if a request is already in flight (e.g. two pages auto-generating in the same render)
+    if (!cvData || isGeneratingRef.current) return;
 
+    isGeneratingRef.current = true;
     setIsGenerating(true);
     setPdfError(null);
 
@@ -311,6 +314,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
       console.error('PDF generation error:', error);
       setPdfError(error instanceof Error ? error.message : 'Failed to generate PDF');
     } finally {
+      isGeneratingRef.current = false;
       setIsGenerating(false);
     }
   }, [cvData, placeTechnicalSkillsAfterSummary, includeProjectShowcase, setPdfObjectUrl]);

@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 const schemaSource = await readFile(new URL('../lib/schemas/cv.schema.ts', import.meta.url), 'utf8');
 const contextSource = await readFile(new URL('../lib/context/CvContext.tsx', import.meta.url), 'utf8');
-const pageSource = await readFile(new URL('../app/page.tsx', import.meta.url), 'utf8');
+const pageSource = await readFile(new URL('../app/settings/page.tsx', import.meta.url), 'utf8');
 const generatorSource = await readFile(new URL('../lib/pdf/generator.ts', import.meta.url), 'utf8');
 const apiRouteSource = await readFile(new URL('../app/api/generate-pdf/route.ts', import.meta.url), 'utf8');
 
