@@ -52,10 +52,9 @@ const DEFAULT_CV_JSON = `{
   },
   "socialLinks": {
     "github": "github.com/shaikhalamin",
-    "linkedin": "linkedin.com/in/shaikh-al-amin",
-    "portfolio": "shaikhalamin.dev"
+    "linkedin": "linkedin.com/in/shaikh-al-amin"
   },
-  "professionalSummary": "Senior Fullstack Engineer with 9+ years of experience building scalable SaaS and enterprise applications using Node.js, NestJS, React, Next.js, TypeScript, PostgreSQL and MySQL. Skilled in microservices, REST APIs, WebSockets, authentication, database optimization, Redis, BullMQ, Docker, CI/CD, AWS, and GCP. Proven technical leader with experience in architecture, code reviews, mentoring, and delivering secure, maintainable products from design to production.",
+  "professionalSummary": "Results-driven Software Engineering professional with 10 years of experience managing the full software development lifecycle, including requirements analysis, system design, development, testing, deployment, and production delivery of scalable software solutions.",
   "experience": [
     {
       "company": "Tixio IO",
@@ -218,7 +217,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const [pdfError, setPdfError] = useState<string | null>(null);
 
   // Render settings
-  const [placeTechnicalSkillsAfterSummary, setPlaceTechnicalSkillsAfterSummaryState] = useState(false);
+  const [placeTechnicalSkillsAfterSummary, setPlaceTechnicalSkillsAfterSummaryState] = useState(true);
   const [includeProjectShowcase, setIncludeProjectShowcaseState] = useState(false);
 
   const setPdfObjectUrl = useCallback((nextPdfUrl: string | null) => {
@@ -344,7 +343,7 @@ export function CvProvider({ children }: { children: ReactNode }) {
   const resetToDefault = useCallback(() => {
     setJsonStringState(DEFAULT_CV_JSON);
     validateAndUpdateData(DEFAULT_CV_JSON);
-    setPlaceTechnicalSkillsAfterSummaryState(false);
+    setPlaceTechnicalSkillsAfterSummaryState(true);
     setIncludeProjectShowcaseState(false);
     setPdfObjectUrl(null);
     setPdfError(null);

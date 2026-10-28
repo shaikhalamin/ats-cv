@@ -12,7 +12,7 @@ test('CvContext exposes render-order setting and sends wrapped PDF payload', () 
   assert.match(contextSource, /setPlaceTechnicalSkillsAfterSummary:\s*\(value: boolean\) => void;/);
   assert.match(
     contextSource,
-    /const \[placeTechnicalSkillsAfterSummary,\s*setPlaceTechnicalSkillsAfterSummaryState\]\s*=\s*useState\(false\);/,
+    /const \[placeTechnicalSkillsAfterSummary,\s*setPlaceTechnicalSkillsAfterSummaryState\]\s*=\s*useState\(true\);/,
   );
   assert.match(
     contextSource,
