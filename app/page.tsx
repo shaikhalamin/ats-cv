@@ -73,22 +73,24 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-200 dark:bg-gray-950">
-      <header className="sm:sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+      <header className="sm:sticky top-0 z-10 flex flex-wrap items-center gap-x-6 gap-y-3 px-4 sm:px-6 py-3 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-3 min-w-0">
-          <svg
-            aria-hidden="true"
-            className="w-8 h-8 flex-shrink-0 text-blue-600"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
+          <Link href="/" aria-label="Home" className="flex-shrink-0">
+            <svg
+              aria-hidden="true"
+              className="w-8 h-8 text-blue-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+          </Link>
           <div className="min-w-0">
             <h1 className="text-base sm:text-xl font-bold leading-tight text-gray-900 dark:text-white">
               Curriculum Vitae
@@ -98,7 +100,7 @@ export default function Home() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <nav className="flex items-center gap-4">
           <Link
             href="/"
             aria-current="page"
@@ -112,6 +114,8 @@ export default function Home() {
           >
             Settings
           </Link>
+        </nav>
+        <div className="ml-auto">
           <DownloadButton />
         </div>
       </header>
