@@ -49,9 +49,9 @@ export default function SettingsPage() {
         <div className="flex flex-wrap items-center gap-3 justify-start sm:justify-end">
           <Link
             href="/"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400"
+            className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
           >
-            View CV
+            Home
           </Link>
           <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
             <input
